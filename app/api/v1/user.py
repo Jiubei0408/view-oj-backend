@@ -1,12 +1,11 @@
 from flask import jsonify
 from flask_login import current_user, login_required, login_user, logout_user
 
-from app.libs.error_code import Success, AuthFailed
-from app.libs.redprint import RedPrint
-
-from app.models.user import get_user_by_username, check_password
-
-from app.validators.forms import LoginForm
+from app.libs.error_code import AuthFailed, Success
+from app.libs.red_print import RedPrint
+from app.models.oj_name import modify_oj_name
+from app.models.user import check_password, get_user_by_username
+from app.validators.forms import LoginForm, OJNameForm
 
 api = RedPrint('user')
 
@@ -23,3 +22,27 @@ def login_api():
         raise AuthFailed('用户名或密码错误')
     login_user(user, remember=True)
     return Success('登录成功')
+
+
+@api.route("/logout", methods=['POST'])
+def logout_api():
+    logout_user()
+    return Success('登出成功')
+
+
+@api.route("/get_user_info", methods=['POST'])
+@login_required
+def get_user_info_api():
+    return jsonify({
+        'id': current_user.id,
+        'username': current_user.username,
+        'nickname': current_user.nickname
+    })
+
+
+@api.route("/modify_oj_name", methods=['POST'])
+@login_required
+def modify_oj_name_api():
+    form = OJNameForm().validate_for_api()
+    modify_oj_name(current_user.id, form.oj_id.data, form.name.data)
+    return Success('修改成功')

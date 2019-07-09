@@ -10,8 +10,10 @@ class User(UserMixin, Base):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    nickname = Column(String(100))
     username = Column(String(100), unique=True)
     password = Column(String(100))
+    permission = Column(Integer)
 
 
 def create_user(username, password):
