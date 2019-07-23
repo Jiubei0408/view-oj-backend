@@ -12,8 +12,7 @@ class CodeForcesSpider(BaseSpider):
         url = 'http://new.npuacm.info/api/crawlers/codeforces/{}'.format(username)
         res = SpiderHttp().get(url=url)
         res_json = json.loads(res.text)
-        return res_json
-        pass
+        return res_json.get('data', dict()).get('solvedList', list())
 
     @staticmethod
     def get_problem_info(problem_id):
@@ -32,4 +31,4 @@ class CodeForcesSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(CodeForcesSpider.get_problem_info('851-B'))
+    print(CodeForcesSpider.get_user_info('taoting'))

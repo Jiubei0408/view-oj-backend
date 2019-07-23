@@ -15,7 +15,7 @@ class ZOJSpider(BaseSpider):
         url = 'http://new.npuacm.info/api/crawlers/zoj/{}'.format(username)
         res = SpiderHttp().get(url=url)
         res_json = json.loads(res.text)
-        return res_json
+        return res_json.get('data', dict()).get('solvedList', list())
 
     @staticmethod
     def get_problem_info(problem_id):

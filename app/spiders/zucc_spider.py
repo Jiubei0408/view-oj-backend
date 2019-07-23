@@ -1,4 +1,3 @@
-import json
 import re
 
 from app.config.setting import *
@@ -7,21 +6,23 @@ from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
 
-class POJSpider(BaseSpider):
+class ZUCCSpider(BaseSpider):
     @staticmethod
     def get_user_info(username):
-        url = 'http://new.npuacm.info/api/crawlers/poj/{}'.format(username)
+        url = 'http://acm.zucc.edu.cn/userinfo.php?user={}'.format(username)
         res = SpiderHttp().get(url=url)
-        res_json = json.loads(res.text)
-        return res_json.get('data', dict()).get('solvedList', list())
+
+        r = re.findall(r'p\((\d+),\d+\);', res.text)
+        return r
 
     @staticmethod
     def get_problem_info(problem_id):
-        url = 'http://poj.org/problem?id={}'.format(problem_id)
+        url = 'http://acm.zucc.edu.cn/problem.php?id={}'.format(problem_id)
         res = SpiderHttp().get(url=url)
+
         try:
-            total = int(re.search(r'<td><b>Total Submissions:</b> (\d+)</td>', res.text).group(1))
-            accept = int(re.search(r'<td><b>Accepted:</b> (\d+)</td>', res.text).group(1))
+            total = int(re.search(r'Submit: </span>(\d+)(&nbsp;)*<span', res.text).group(1))
+            accept = int(re.search(r'Solved: </span>(\d+)(&nbsp;)*<br>', res.text).group(1))
             rating = calculate_problem_rating(total, accept)
         except:
             rating = PROBLEM_DEFAULT_RATING
@@ -30,4 +31,4 @@ class POJSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(POJSpider.get_problem_info('1000'))
+    print(ZUCCSpider.get_problem_info('1000'))
