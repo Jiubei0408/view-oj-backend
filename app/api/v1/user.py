@@ -40,9 +40,9 @@ def get_user_info_api():
     })
 
 
-@api.route("/modify_oj_name", methods=['POST'])
+@api.route("/modify_oj_username", methods=['POST'])
 @login_required
-def modify_oj_name_api():
+def modify_oj_username_api():
     form = OJNameForm().validate_for_api()
     modify_oj_username(current_user.id, form.oj_id.data, form.name.data)
     return Success('修改成功')
