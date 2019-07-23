@@ -18,8 +18,8 @@ def register_plugin(flask_app):
     db.init_app(flask_app)
 
     # 初始化数据库
-    # with flask_app.app_context():
-    #     db.create_all()
+    with flask_app.app_context():
+        db.create_all()
 
     # 注册cors
     cors.init_app(flask_app)

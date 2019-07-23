@@ -30,4 +30,4 @@ class POJSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    POJSpider.get_problem_info('1000')
+    print(POJSpider.get_problem_info('1000'))

@@ -3,7 +3,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 
 from app.libs.error_code import AuthFailed, Success
 from app.libs.red_print import RedPrint
-from app.models.oj_name import modify_oj_name
+from app.models.oj_username import modify_oj_username
 from app.models.user import check_password, get_user_by_username
 from app.validators.forms import LoginForm, OJNameForm
 
@@ -44,5 +44,5 @@ def get_user_info_api():
 @login_required
 def modify_oj_name_api():
     form = OJNameForm().validate_for_api()
-    modify_oj_name(current_user.id, form.oj_id.data, form.name.data)
+    modify_oj_username(current_user.id, form.oj_id.data, form.name.data)
     return Success('修改成功')

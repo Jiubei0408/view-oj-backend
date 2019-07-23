@@ -36,4 +36,4 @@ class ZOJSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    ZOJSpider.get_problem_info('1001')
+    print(ZOJSpider.get_problem_info('1001'))

@@ -22,6 +22,7 @@ db = SQLAlchemy(query_class=BaseQuery)
 
 class Base(db.Model):
     __abstract__ = True
+    __table_args__ = {"useexisting": True}
     create_time = Column(DateTime)
 
     def __init__(self):

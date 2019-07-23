@@ -32,4 +32,4 @@ class HDUSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    HDUSpider.get_problem_info('1000')
+    print(HDUSpider.get_problem_info('1000'))

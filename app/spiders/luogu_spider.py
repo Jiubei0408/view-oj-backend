@@ -49,4 +49,4 @@ class LuoGuSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    LuoGuSpider.get_problem_info('P5413')
+    print(LuoGuSpider.get_problem_info('P5413'))
