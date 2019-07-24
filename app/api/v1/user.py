@@ -48,5 +48,5 @@ def get_user_info_api():
 @login_required
 def modify_oj_username_api():
     form = OJNameForm().validate_for_api()
-    modify_oj_username(current_user.id, form.oj_id.data, form.username.data)
+    modify_oj_username(form.user_id.data, form.oj_id.data, form.username.data)
     return Success('修改成功')
