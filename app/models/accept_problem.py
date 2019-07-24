@@ -30,10 +30,17 @@ def get_accept_problem_list(user_id, oj_id):
 
 
 def get_accept_problem_list_by_date(user_id, start_date, end_date):
-    if not start_date:
-        start_date = datetime.date.today() - datetime.timedelta(days=7)
-    if not end_date:
-        end_date = datetime.datetime.today()
+    if start_date:
+        start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    else:
+        datetime.date.today() - datetime.timedelta(days=7)
+    if end_date:
+        end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+    else:
+        datetime.date.today()
+
+    end_date += datetime.timedelta(days=1)
+
     r = AcceptProblem.query.filter(
         AcceptProblem.user_id == user_id,
         AcceptProblem.create_time >= start_date,
