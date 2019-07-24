@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import Column, Integer, String
 
 from app.models.base import Base, db
@@ -13,12 +15,14 @@ class AcceptProblem(Base):
 
 
 def add_accept_problem(user_id, oj_id, problem_id):
-    with db.auto_commit():
-        problem = AcceptProblem()
-        problem.user_id = user_id
-        problem.oj_id = oj_id
-        problem.problem_id = problem_id
-        db.session.add(problem)
+    problem = AcceptProblem.query.filter_by(user_id=user_id, oj_id=oj_id, problem_id=problem_id).first()
+    if not problem:
+        with db.auto_commit():
+            problem = AcceptProblem()
+            problem.user_id = user_id
+            problem.oj_id = oj_id
+            problem.problem_id = problem_id
+            db.session.add(problem)
 
 
 def get_accept_problem_list(user_id, oj_id):
@@ -26,6 +30,10 @@ def get_accept_problem_list(user_id, oj_id):
 
 
 def get_accept_problem_list_by_date(user_id, start_date, end_date):
+    if not start_date:
+        start_date = datetime.date.today() - datetime.timedelta(days=7)
+    if not end_date:
+        end_date = datetime.datetime.today()
     r = AcceptProblem.query.filter(
         AcceptProblem.user_id == user_id,
         AcceptProblem.create_time >= start_date,

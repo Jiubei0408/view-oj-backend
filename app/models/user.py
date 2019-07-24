@@ -34,6 +34,10 @@ def check_password(user, password):
     return user.password == password
 
 
+def get_all_user():
+    return [i.id for i in User.query.filter(User.permission != -1).all()]
+
+
 @login_manager.user_loader
 def get_user_by_user_id(user_id):
     return User.query.get(int(user_id))
@@ -48,5 +52,5 @@ if __name__ == '__main__':
     from app import create_app
 
     with create_app().app_context():
-        r = get_user_by_user_id(3)
+        r = get_all_user()
     print(r)

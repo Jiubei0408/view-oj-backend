@@ -34,9 +34,13 @@ def logout_api():
 @login_required
 def get_user_info_api():
     return jsonify({
-        'id': current_user.id,
-        'username': current_user.username,
-        'nickname': current_user.nickname
+        'code': 0,
+        'data': {
+            'id': current_user.id,
+            'username': current_user.username,
+            'nickname': current_user.nickname,
+            'permission': current_user.permission
+        }
     })
 
 
@@ -44,5 +48,5 @@ def get_user_info_api():
 @login_required
 def modify_oj_username_api():
     form = OJNameForm().validate_for_api()
-    modify_oj_username(current_user.id, form.oj_id.data, form.name.data)
+    modify_oj_username(current_user.id, form.oj_id.data, form.username.data)
     return Success('修改成功')

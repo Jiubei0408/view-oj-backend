@@ -1,12 +1,12 @@
 import json
 import re
 
-from app.config.setting import *
+from app.config.setting import PROBLEM_DEFAULT_RATING
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
 
-class CodeForcesSpider(BaseSpider):
+class CodeforcesSpider(BaseSpider):
     @staticmethod
     def get_user_info(username):
         url = 'http://new.npuacm.info/api/crawlers/codeforces/{}'.format(username)
@@ -31,4 +31,4 @@ class CodeForcesSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(CodeForcesSpider.get_user_info('taoting'))
+    print(CodeforcesSpider.get_user_info('taoting'))

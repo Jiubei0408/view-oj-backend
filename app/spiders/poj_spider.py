@@ -1,13 +1,13 @@
 import json
 import re
 
-from app.config.setting import *
+from app.config.setting import PROBLEM_DEFAULT_RATING
 from app.libs.service import calculate_problem_rating
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
 
-class POJSpider(BaseSpider):
+class PojSpider(BaseSpider):
     @staticmethod
     def get_user_info(username):
         url = 'http://new.npuacm.info/api/crawlers/poj/{}'.format(username)
@@ -30,4 +30,4 @@ class POJSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(POJSpider.get_problem_info('1000'))
+    print(PojSpider.get_problem_info('1000'))

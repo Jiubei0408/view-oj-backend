@@ -1,13 +1,13 @@
 import json
 import re
 
-from app.config.setting import *
+from app.config.setting import PROBLEM_DEFAULT_RATING
 from app.libs.service import calculate_problem_rating
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
 
-class LuoGuSpider(BaseSpider):
+class LuoguSpider(BaseSpider):
     @staticmethod
     def get_user_info(username):
         url = 'http://new.npuacm.info/api/crawlers/luogu/{}'.format(username)
@@ -49,4 +49,4 @@ class LuoGuSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(LuoGuSpider.get_problem_info('P5413'))
+    print(LuoguSpider.get_problem_info('P5413'))

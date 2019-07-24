@@ -1,13 +1,13 @@
 import json
 import re
 
-from app.config.setting import *
+from app.config.setting import PROBLEM_DEFAULT_RATING
 from app.libs.service import calculate_problem_rating
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
 
-class HDUSpider(BaseSpider):
+class HduSpider(BaseSpider):
     @staticmethod
     def get_user_info(username):
         url = 'http://new.npuacm.info/api/crawlers/hdu/{}'.format(username)
@@ -32,4 +32,4 @@ class HDUSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(HDUSpider.get_problem_info('1000'))
+    print(HduSpider.get_problem_info('1000'))

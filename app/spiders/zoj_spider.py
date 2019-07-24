@@ -3,13 +3,13 @@ import re
 
 from parsel import Selector
 
-from app.config.setting import *
+from app.config.setting import PROBLEM_DEFAULT_RATING
 from app.libs.service import calculate_problem_rating
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
 
-class ZOJSpider(BaseSpider):
+class ZojSpider(BaseSpider):
     @staticmethod
     def get_user_info(username):
         url = 'http://new.npuacm.info/api/crawlers/zoj/{}'.format(username)
@@ -36,4 +36,4 @@ class ZOJSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(ZOJSpider.get_problem_info('1001'))
+    print(ZojSpider.get_problem_info('1001'))

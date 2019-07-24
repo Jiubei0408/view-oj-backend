@@ -4,7 +4,7 @@ from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
 
-class VJudgeSpider(BaseSpider):
+class VjudgeSpider(BaseSpider):
     @staticmethod
     def get_user_info(username):
         url = 'http://new.npuacm.info/api/crawlers/vjudge/{}'.format(username)

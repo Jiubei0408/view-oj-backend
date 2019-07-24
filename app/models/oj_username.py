@@ -9,7 +9,7 @@ class OJUsername(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, nullable=False)
     oj_id = Column(Integer, nullable=False)
-    username = Column(String(100), unique=True, nullable=False)
+    username = Column(String(100), nullable=False)
 
 
 def modify_oj_username(user_id, oj_id, username):

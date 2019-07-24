@@ -1,12 +1,12 @@
 import re
 
-from app.config.setting import *
+from app.config.setting import PROBLEM_DEFAULT_RATING
 from app.libs.service import calculate_problem_rating
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
 
-class ZUCCSpider(BaseSpider):
+class ZuccSpider(BaseSpider):
     @staticmethod
     def get_user_info(username):
         url = 'http://acm.zucc.edu.cn/userinfo.php?user={}'.format(username)
@@ -31,4 +31,4 @@ class ZUCCSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(ZUCCSpider.get_problem_info('1000'))
+    print(ZuccSpider.get_problem_info('1000'))
