@@ -1,6 +1,7 @@
 from app.models.accept_problem import get_accept_problem_list, add_accept_problem
 from app.models.oj import get_oj_by_oj_id, get_oj_id_by_oj_name, get_all_oj
 from app.models.oj_username import get_oj_username
+from app.models.task import finish_task, create_task
 from app.models.user import get_all_user
 from app.spiders.codeforces_spider import CodeforcesSpider
 from app.spiders.hdu_spider import HduSpider
@@ -18,40 +19,44 @@ def crawl_oj_info(user_id, oj_id):
         return
     oj_spider = globals()[oj_name + 'Spider']
 
-    already_accept_problem = get_accept_problem_list(user_id, oj_id)
+    already_accept_problem = dict()
+    for i in get_all_oj():
+        already_accept_problem[i['id']] = set(get_accept_problem_list(user_id, i['id']))
+
     all_accept_problem = oj_spider.get_user_info(oj_username)
-    now_accept_problem = set(all_accept_problem) - set(already_accept_problem)
 
-    for problem_id in now_accept_problem:
-
+    for problem_id in all_accept_problem:
         if oj_name == 'Vjudge':
-            real_oj_name, real_problem_id = problem_id.split('-')
+            real_oj_name, problem_id = problem_id.split('-')
             real_oj_name = real_oj_name.lower()
             real_oj_id = get_oj_id_by_oj_name(real_oj_name)
-            add_accept_problem(user_id, real_oj_id, real_problem_id)
-            pass
         else:
-            add_accept_problem(user_id, oj_id, problem_id)
+            real_oj_id = oj_id
+
+        if problem_id not in already_accept_problem[real_oj_id]:
+            add_accept_problem(user_id, real_oj_id, problem_id)
 
     # TODO 计算rating
     pass
 
 
-def crawl_all_oj_info(user_id=None):
-    if user_id:
-        user_id_list = [user_id]
-    else:
-        user_id_list = get_all_user()
+def app_task_crawl_oj_info(user_id, oj_id):
+    from app import create_app
+    with create_app().app_context():
+        crawl_oj_info(user_id, oj_id)
+        finish_task(user_id, oj_id)
 
-    for user_id in user_id_list:
-        for oj_id in get_all_oj():
-            if oj_id['status']:
-                crawl_oj_info(user_id, oj_id['id'])
+
+def task_crawl_oj_info(user_id, oj_id):
+    create_task(user_id, oj_id)
+    from threading import Thread
+    t = Thread(target=app_task_crawl_oj_info, args=(user_id, oj_id))
+    t.start()
 
 
 if __name__ == '__main__':
     from app import create_app
 
     with create_app().app_context():
-        r = crawl_oj_info(3, 12)
+        r = crawl_oj_info(1, 1)
     print(r)

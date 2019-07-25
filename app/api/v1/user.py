@@ -1,11 +1,11 @@
 from flask import jsonify
 from flask_login import current_user, login_required, login_user, logout_user
 
-from app.libs.error_code import AuthFailed, Success
+from app.libs.error_code import AuthFailed, Success, Forbidden
 from app.libs.red_print import RedPrint
-from app.models.oj_username import modify_oj_username
-from app.models.user import check_password, get_user_by_username
-from app.validators.forms import LoginForm, OJNameForm
+from app.models.oj_username import get_user_oj_username, modify_oj_username
+from app.models.user import check_password, get_user_by_username, modify_password, create_user
+from app.validators.forms import LoginForm, UserIdForm, OJNameForm, ModifyPasswordForm, CreateUserForm
 
 api = RedPrint('user')
 
@@ -17,17 +17,17 @@ def login_api():
     password = form.password.data
     user = get_user_by_username(username)
     if not user:
-        raise AuthFailed('用户名不存在')
+        raise AuthFailed('Username does not exist')
     if not check_password(user, password):
-        raise AuthFailed('用户名或密码错误')
+        raise AuthFailed('Wrong username or password')
     login_user(user, remember=True)
-    return Success('登录成功')
+    return Success('Login successful')
 
 
 @api.route("/logout", methods=['POST'])
 def logout_api():
     logout_user()
-    return Success('登出成功')
+    return Success('Logout successful')
 
 
 @api.route("/get_user_info", methods=['POST'])
@@ -44,9 +44,38 @@ def get_user_info_api():
     })
 
 
+@api.route("/get_oj_username", methods=['POST'])
+@login_required
+def get_oj_username_api():
+    form = UserIdForm().validate_for_api()
+    res = get_user_oj_username(form.user_id.data)
+    return jsonify({
+        'code': 0,
+        'data': res
+    })
+
+
 @api.route("/modify_oj_username", methods=['POST'])
 @login_required
 def modify_oj_username_api():
     form = OJNameForm().validate_for_api()
     modify_oj_username(form.user_id.data, form.oj_id.data, form.username.data)
-    return Success('修改成功')
+    return Success('Modify successful')
+
+
+@api.route("/modify_password", methods=['POST'])
+@login_required
+def modify_password_api():
+    form = ModifyPasswordForm().validate_for_api()
+    modify_password(form.user_id.data, form.password.data)
+    return Success('Modify successful')
+
+
+@api.route("/create_user", methods=['POST'])
+@login_required
+def create_user_api():
+    if not current_user.permission:
+        raise Forbidden('Only administrators can operate')
+    form = CreateUserForm().validate_for_api()
+    create_user(form.username.data, form.nickname.data)
+    return Success('Create successful')

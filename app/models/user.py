@@ -16,11 +16,12 @@ class User(UserMixin, Base):
     permission = Column(Integer, nullable=False)
 
 
-def create_user(username, password):
+def create_user(username, nickname):
     with db.auto_commit():
         user = User()
         user.username = username
-        user.password = password
+        user.nickname = nickname
+        user.password = username
         user.permission = 0
         db.session.add(user)
     return user
@@ -32,6 +33,12 @@ def get_user_by_username(username):
 
 def check_password(user, password):
     return user.password == password
+
+
+def modify_password(user_id, password):
+    user = get_user_by_user_id(user_id)
+    with db.auto_commit():
+        user.password = password
 
 
 def get_all_user():

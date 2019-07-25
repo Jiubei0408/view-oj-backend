@@ -39,6 +39,13 @@ def get_oj_username(user_id, oj_id):
         return oj_username.username
 
 
+def get_user_oj_username(user_id):
+    return [{
+        'oj_id': i.id,
+        'username': i.username
+    } for i in OJUsername.query.filter_by(user_id=user_id).all()]
+
+
 if __name__ == '__main__':
     from app import create_app
 

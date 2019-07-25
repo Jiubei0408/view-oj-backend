@@ -23,17 +23,9 @@ db = SQLAlchemy(query_class=BaseQuery)
 class Base(db.Model):
     __abstract__ = True
     __table_args__ = {"useexisting": True}
-    create_time = Column(DateTime)
-
-    def __init__(self):
-        self.create_time = datetime.now()
 
     def __getitem__(self, item):
         return getattr(self, item)
-
-    @property
-    def create_datetime(self):
-        return self.create_time
 
     def set_attrs(self, attrs_dict):
         for key, value in attrs_dict.items():
