@@ -4,7 +4,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from app.libs.error_code import AuthFailed, Success, Forbidden
 from app.libs.red_print import RedPrint
 from app.models.oj_username import get_user_oj_username, modify_oj_username
-from app.models.user import check_password, get_user_by_username, modify_password, create_user
+from app.models.user import check_password, get_user_by_username, modify_password, create_user, get_all_user
 from app.validators.forms import LoginForm, UserIdForm, OJNameForm, ModifyPasswordForm, CreateUserForm
 
 api = RedPrint('user')
@@ -67,7 +67,7 @@ def modify_oj_username_api():
 @login_required
 def modify_password_api():
     form = ModifyPasswordForm().validate_for_api()
-    modify_password(form.user_id.data, form.password.data)
+    modify_password(form.user_id.data, form.new_password.data)
     return Success('Modify successful')
 
 
@@ -79,3 +79,13 @@ def create_user_api():
     form = CreateUserForm().validate_for_api()
     create_user(form.username.data, form.nickname.data)
     return Success('Create successful')
+
+
+@api.route("/get_user_list", methods=['POST'])
+@login_required
+def get_user_list_api():
+    res = get_all_user()
+    return jsonify({
+        'code': 0,
+        'data': res
+    })

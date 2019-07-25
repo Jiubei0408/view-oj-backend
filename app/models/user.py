@@ -14,6 +14,7 @@ class User(UserMixin, Base):
     username = Column(String(100), unique=True)
     password = Column(String(100), nullable=False)
     permission = Column(Integer, nullable=False)
+    status = Column(Integer, nullable=False)
 
 
 def create_user(username, nickname):
@@ -23,6 +24,7 @@ def create_user(username, nickname):
         user.nickname = nickname
         user.password = username
         user.permission = 0
+        user.status = 1
         db.session.add(user)
     return user
 
@@ -42,7 +44,13 @@ def modify_password(user_id, password):
 
 
 def get_all_user():
-    return [i.id for i in User.query.filter(User.permission != -1).all()]
+    return [{
+        'id': i.id,
+        'username': i.username,
+        'nickname': i.nickname,
+        'permission': i.permission,
+        'status': i.status
+    } for i in User.query.all()]
 
 
 @login_manager.user_loader

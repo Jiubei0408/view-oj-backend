@@ -50,13 +50,13 @@ def get_accept_problem_distributed_api():
 def get_all_accept_problem_count_api():
     form = DateForm().validate_for_api()
     res = list()
-    for user_id in get_all_user():
-        user = get_user_by_user_id(user_id)
+    for user in get_all_user():
         res.append({
-            'id': user.id,
-            'username': user.username,
-            'nickname': user.nickname,
-            'accept_problem_count': get_accept_problem_count_by_date(user_id, form.start_date.data, form.end_date.data)
+            'id': user['id'],
+            'username': user['username'],
+            'nickname': user['nickname'],
+            'accept_problem_count': get_accept_problem_count_by_date(user['id'], form.start_date.data,
+                                                                     form.end_date.data)
         })
     return jsonify({
         'code': 0,
@@ -79,9 +79,10 @@ def refresh_data_api():
 def refresh_all_data_api():
     if not current_user.permission:
         raise Forbidden('Only administrators can operate')
-    for user_id in get_all_user():
-        for oj_id in get_all_oj():
-            if oj_id['status']:
-                if not task_is_exist(user_id, oj_id['id']):
-                    task_crawl_oj_info(user_id, oj_id['id'])
+    for user in get_all_user():
+        for oj in get_all_oj():
+            if oj['status']:
+                if user['status']:
+                    if not task_is_exist(user['id'], oj['id']):
+                        task_crawl_oj_info(user['id'], oj['id'])
     return Success('Submit all refresh request successfully')

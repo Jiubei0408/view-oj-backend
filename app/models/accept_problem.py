@@ -39,7 +39,8 @@ def get_accept_problem_list_by_date(user_id, start_date, end_date):
     for i in r:
         rr.append({
             'oj_id': i.oj_id,
-            'problem_id': i.problem_id
+            'problem_id': i.problem_id,
+            'create_time': i.create_time
         })
     return rr
 

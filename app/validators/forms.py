@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired, ValidationError
 
 from app.libs.error_code import Forbidden
 from app.models.oj import get_oj_by_oj_id
+from app.models.user import get_user_by_user_id, check_password
 from app.validators.base import BaseForm as Form
 
 
@@ -61,7 +62,16 @@ class RefreshForm(UserIdForm, OJIdForm):
 
 
 class ModifyPasswordForm(UserIdForm):
-    password = StringField(validators=[DataRequired(message='Password cannot be empty')])
+    old_password = StringField(validators=[DataRequired(message='Password cannot be empty')])
+    new_password = StringField(validators=[DataRequired(message='Password cannot be empty')])
+
+    def validate_old_password(self, value):
+        if not current_user.permission:
+            if current_user.id != self.user_id.data:
+                raise Forbidden()
+            user = get_user_by_user_id(self.user_id.data)
+            if not check_password(user, self.old_password.data):
+                raise ValidationError('Old password wrong, please check again')
 
 
 class CreateUserForm(Form):
