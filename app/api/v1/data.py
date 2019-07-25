@@ -81,8 +81,6 @@ def refresh_all_data_api():
         raise Forbidden('Only administrators can operate')
     for user in get_all_user():
         for oj in get_all_oj():
-            if oj['status']:
-                if user['status']:
-                    if not task_is_exist(user['id'], oj['id']):
-                        task_crawl_oj_info(user['id'], oj['id'])
+            if oj['status'] and user['status'] and not task_is_exist(user['id'], oj['id']):
+                task_crawl_oj_info(user['id'], oj['id'])
     return Success('Submit all refresh request successfully')
