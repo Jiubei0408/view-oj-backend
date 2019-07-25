@@ -10,8 +10,8 @@ class User(UserMixin, Base):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    nickname = Column(String(100), nullable=False)
     username = Column(String(100), unique=True)
+    nickname = Column(String(100), nullable=False)
     password = Column(String(100), nullable=False)
     permission = Column(Integer, nullable=False)
     status = Column(Integer, nullable=False)
@@ -41,6 +41,14 @@ def modify_password(user_id, password):
     user = get_user_by_user_id(user_id)
     with db.auto_commit():
         user.password = password
+
+
+def modify_user(user_id, nickname, permission, status):
+    user = get_user_by_user_id(user_id)
+    with db.auto_commit():
+        user.nickname = nickname
+        user.permission = permission
+        user.status = status
 
 
 def get_all_user():

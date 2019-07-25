@@ -7,7 +7,7 @@ from app.models.accept_problem import get_accept_problem_list_by_date, get_accep
     get_accept_problem_distributed
 from app.models.oj import get_all_oj
 from app.models.task import task_is_exist
-from app.models.user import get_all_user, get_user_by_user_id
+from app.models.user import get_all_user
 from app.spiders.oj_spider import task_crawl_oj_info
 from app.validators.forms import DateForm, UserIdForm, InquireForm, RefreshForm
 

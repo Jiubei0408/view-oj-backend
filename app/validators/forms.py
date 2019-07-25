@@ -62,8 +62,8 @@ class RefreshForm(UserIdForm, OJIdForm):
 
 
 class ModifyPasswordForm(UserIdForm):
-    old_password = StringField(validators=[DataRequired(message='Password cannot be empty')])
-    new_password = StringField(validators=[DataRequired(message='Password cannot be empty')])
+    old_password = StringField(validators=[DataRequired(message='Old password cannot be empty')])
+    new_password = StringField(validators=[DataRequired(message='New password cannot be empty')])
 
     def validate_old_password(self, value):
         if not current_user.permission:
@@ -77,3 +77,14 @@ class ModifyPasswordForm(UserIdForm):
 class CreateUserForm(Form):
     username = StringField(validators=[DataRequired(message='Username cannot be empty')])
     nickname = StringField(validators=[DataRequired(message='Nickname cannot be empty')])
+
+
+class UserInfoForm(UserIdForm):
+    nickname = StringField(validators=[DataRequired(message='Nickname cannot be empty')])
+    permission = IntegerField()
+    status = IntegerField()
+
+    def validate_permission(self, value):
+        if not current_user.permission:
+            if self.permission.data != 0:
+                raise Forbidden()
