@@ -1,4 +1,3 @@
-.gitignore
 .idea/
 app/config/secure.py
-venv/
+venv
