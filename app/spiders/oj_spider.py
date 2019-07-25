@@ -33,7 +33,7 @@ def crawl_oj_info(user_id, oj_id):
         else:
             real_oj_id = oj_id
 
-        if problem_id not in already_accept_problem[real_oj_id]:
+        if problem_id not in already_accept_problem.get(real_oj_id, set()):
             add_accept_problem(user_id, real_oj_id, problem_id)
 
     # TODO 计算rating
