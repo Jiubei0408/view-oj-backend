@@ -58,7 +58,7 @@ def get_all_user():
         'nickname': i.nickname,
         'permission': i.permission,
         'status': i.status
-    } for i in User.query.all()]
+    } for i in User.query.order_by(User.username).all()]
 
 
 @login_manager.user_loader
