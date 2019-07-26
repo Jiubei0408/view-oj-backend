@@ -16,13 +16,15 @@ class AcceptProblem(Base):
 
 
 def add_accept_problem(user_id, oj_id, problem_id):
-    with db.auto_commit():
-        problem = AcceptProblem()
-        problem.user_id = user_id
-        problem.oj_id = oj_id
-        problem.problem_id = problem_id
-        problem.create_time = datetime.datetime.now()
-        db.session.add(problem)
+    problem = AcceptProblem.query.filter_by(user_id=user_id, oj_id=oj_id, problem_id=problem_id).first()
+    if not problem:
+        with db.auto_commit():
+            problem = AcceptProblem()
+            problem.user_id = user_id
+            problem.oj_id = oj_id
+            problem.problem_id = problem_id
+            problem.create_time = datetime.datetime.now()
+            db.session.add(problem)
 
 
 def get_accept_problem_list(user_id, oj_id):

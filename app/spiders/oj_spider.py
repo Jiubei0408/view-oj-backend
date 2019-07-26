@@ -47,5 +47,5 @@ if __name__ == '__main__':
     from app import create_app
 
     with create_app().app_context():
-        r = crawl_oj_info(1, 1)
+        r = crawl_oj_info(19, 7)
     print(r)
