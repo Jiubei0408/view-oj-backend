@@ -12,28 +12,48 @@ from app.spiders.zucc_spider import ZuccSpider
 
 
 def crawl_oj_info(user_id, oj_id):
-    oj_name = get_oj_by_oj_id(oj_id).title()
+    oj_name = get_oj_by_oj_id(oj_id)
     oj_username = get_oj_username(user_id, oj_id)
     if not oj_username:
         return
-    oj_spider = globals()[oj_name + 'Spider']
+    oj_spider = globals()[oj_name.title() + 'Spider']
 
     already_accept_problem = dict()
     for i in get_all_oj():
         already_accept_problem[i['id']] = set(get_accept_problem_list(user_id, i['id']))
 
     all_accept_problem = oj_spider.get_user_info(oj_username)
+    if not all_accept_problem:
+        return
 
     for problem_id in all_accept_problem:
         real_oj_id = oj_id
-        if oj_name == 'Vjudge':
+        if oj_name == 'vjudge':
             real_oj_name, problem_id = problem_id.split('-')
             real_oj_name = real_oj_name.lower()
             if real_oj_name == 'gym':
                 real_oj_name = 'codeforces'
 
             real_oj_id = get_oj_id_by_oj_name(real_oj_name)
-        elif oj_name == 'Codeforces':
+        elif oj_name == 'luogu':
+            if problem_id[0] == 'P':
+                real_oj_name = 'luogu'
+                problem_id = problem_id[1:]
+            elif problem_id[0] == 'C':
+                real_oj_name = 'codeforces'
+                problem_id = problem_id[2:]
+            elif problem_id[0] == 'S':
+                real_oj_name = 'spoj'
+                problem_id = problem_id[2:]
+            elif problem_id[0] == 'A':
+                real_oj_name = 'atcoder'
+                problem_id = problem_id[2:]
+            elif problem_id[0] == 'U':
+                real_oj_name = 'uva'
+                problem_id = problem_id[3:]
+
+            real_oj_id = get_oj_id_by_oj_name(real_oj_name)
+        elif oj_name == 'codeforces':
             problem_id = "".join(problem_id.split('-'))
 
         if problem_id not in already_accept_problem.get(real_oj_id, set()):
@@ -47,5 +67,5 @@ if __name__ == '__main__':
     from app import create_app
 
     with create_app().app_context():
-        r = crawl_oj_info(19, 7)
+        r = crawl_oj_info(15, 5)
     print(r)
