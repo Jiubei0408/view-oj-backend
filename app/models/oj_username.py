@@ -41,7 +41,7 @@ def get_oj_username(user_id, oj_id):
 
 def get_user_oj_username(user_id):
     return [{
-        'oj_id': i.id,
+        'oj_id': i.oj_id,
         'username': i.username
     } for i in OJUsername.query.filter_by(user_id=user_id).all()]
 
