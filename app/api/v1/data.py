@@ -51,13 +51,14 @@ def get_all_accept_problem_count_api():
     form = DateForm().validate_for_api()
     res = list()
     for user in get_all_user():
-        res.append({
-            'id': user['id'],
-            'username': user['username'],
-            'nickname': user['nickname'],
-            'accept_problem_count': get_accept_problem_count_by_date(user['id'], form.start_date.data,
-                                                                     form.end_date.data)
-        })
+        if user['status']:
+            res.append({
+                'id': user['id'],
+                'username': user['username'],
+                'nickname': user['nickname'],
+                'accept_problem_count': get_accept_problem_count_by_date(user['id'], form.start_date.data,
+                                                                         form.end_date.data)
+            })
     return jsonify({
         'code': 0,
         'data': res
