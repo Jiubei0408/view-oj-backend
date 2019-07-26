@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, Integer, DateTime
+from sqlalchemy import Column, Integer, DateTime, desc
 
 from app.models.base import Base, db
 
@@ -39,6 +39,20 @@ def finish_task(task_id):
 
 def task_is_exist(user_id, oj_id):
     return Task.query.filter_by(user_id=user_id, oj_id=oj_id, status=0).order_by(Task.id).first() is not None
+
+
+def get_all_task():
+    r = Task.query.order_by(desc(Task.id)).all()
+    rr = []
+    for i in r:
+        rr.append({
+            'id': i.id,
+            'user_id': i.user_id,
+            'oj_id': i.oj_id,
+            'create_time': i.create_time,
+            'finish_time': i.finish_time
+        })
+    return rr
 
 
 if __name__ == '__main__':
