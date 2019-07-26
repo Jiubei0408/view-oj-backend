@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, ValidationError
 
 from app.libs.error_code import Forbidden
 from app.models.oj import get_oj_by_oj_id
-from app.models.user import get_user_by_user_id, check_password
+from app.models.user import get_user_by_user_id, check_password, get_user_by_username
 from app.validators.base import BaseForm as Form
 
 
@@ -77,6 +77,10 @@ class ModifyPasswordForm(UserIdForm):
 class CreateUserForm(Form):
     username = StringField(validators=[DataRequired(message='Username cannot be empty')])
     nickname = StringField(validators=[DataRequired(message='Nickname cannot be empty')])
+
+    def validate_username(self, value):
+        if get_user_by_username(self.username.data):
+            raise ValidationError('Username already exist')
 
 
 class UserInfoForm(UserIdForm):
