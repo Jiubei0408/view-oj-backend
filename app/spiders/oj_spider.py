@@ -25,12 +25,16 @@ def crawl_oj_info(user_id, oj_id):
     all_accept_problem = oj_spider.get_user_info(oj_username)
 
     for problem_id in all_accept_problem:
+        real_oj_id = oj_id
         if oj_name == 'Vjudge':
             real_oj_name, problem_id = problem_id.split('-')
             real_oj_name = real_oj_name.lower()
+            if real_oj_name == 'gym':
+                real_oj_name = 'codeforces'
+
             real_oj_id = get_oj_id_by_oj_name(real_oj_name)
-        else:
-            real_oj_id = oj_id
+        elif oj_name == 'Codeforces':
+            problem_id = "".join(problem_id.split('-'))
 
         if problem_id not in already_accept_problem.get(real_oj_id, set()):
             add_accept_problem(user_id, real_oj_id, problem_id)
