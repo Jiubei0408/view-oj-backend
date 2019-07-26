@@ -3,6 +3,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 
 from app.libs.error_code import AuthFailed, Success, Forbidden
 from app.libs.red_print import RedPrint
+from app.models.accept_problem import delete_accept_problem_list
 from app.models.oj_username import get_user_oj_username, modify_oj_username
 from app.models.user import check_password, get_user_by_username, modify_password, create_user, get_all_user, \
     modify_user
@@ -61,6 +62,7 @@ def get_oj_username_api():
 def modify_oj_username_api():
     form = OJNameForm().validate_for_api()
     modify_oj_username(form.user_id.data, form.oj_id.data, form.username.data)
+    delete_accept_problem_list(form.user_id.data, form.oj_id.data)
     return Success('Modify successful')
 
 

@@ -61,11 +61,16 @@ def get_accept_problem_distributed(user_id):
         AcceptProblem.oj_id).all()]
 
 
+def delete_accept_problem_list(user_id, oj_id):
+    with db.auto_commit():
+        AcceptProblem.query.filter_by(user_id=user_id, oj_id=oj_id).delete()
+
+
 if __name__ == '__main__':
     from app import create_app
 
     with create_app().app_context():
         s = datetime.date.today()
         e = datetime.date.today() + datetime.timedelta(days=1)
-        r = get_accept_problem_distributed(1)
+        r = delete_accept_problem_list(1, 2)
     print(r)
