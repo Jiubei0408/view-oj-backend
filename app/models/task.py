@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, DateTime
 
 from app.models.base import Base, db
 
@@ -26,20 +26,19 @@ def create_task(user_id, oj_id):
         db.session.add(task)
 
 
-def get_task(user_id, oj_id):
-    return Task.query.filter_by(user_id=user_id, oj_id=oj_id, status=0).first()
+def get_task():
+    return Task.query.filter_by(status=0).order_by(Task.id).first()
 
 
-def finish_task(user_id, oj_id):
-    task = get_task(user_id, oj_id)
-    if task:
-        with db.auto_commit():
-            task.status = 1
-            task.finish_time = datetime.datetime.now()
+def finish_task(task_id):
+    task = Task.query.get(task_id)
+    with db.auto_commit():
+        task.status = 1
+        task.finish_time = datetime.datetime.now()
 
 
 def task_is_exist(user_id, oj_id):
-    return get_task(user_id, oj_id) is not None
+    return Task.query.filter_by(user_id=user_id, oj_id=oj_id, status=0).order_by(Task.id).first() is not None
 
 
 if __name__ == '__main__':

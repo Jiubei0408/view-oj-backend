@@ -1,8 +1,7 @@
 from app.models.accept_problem import get_accept_problem_list, add_accept_problem
 from app.models.oj import get_oj_by_oj_id, get_oj_id_by_oj_name, get_all_oj
 from app.models.oj_username import get_oj_username
-from app.models.task import finish_task, create_task
-from app.models.user import get_all_user
+
 from app.spiders.codeforces_spider import CodeforcesSpider
 from app.spiders.hdu_spider import HduSpider
 from app.spiders.luogu_spider import LuoguSpider
@@ -38,20 +37,6 @@ def crawl_oj_info(user_id, oj_id):
 
     # TODO 计算rating
     pass
-
-
-def app_task_crawl_oj_info(user_id, oj_id):
-    from app import create_app
-    with create_app().app_context():
-        crawl_oj_info(user_id, oj_id)
-        finish_task(user_id, oj_id)
-
-
-def task_crawl_oj_info(user_id, oj_id):
-    create_task(user_id, oj_id)
-    from threading import Thread
-    t = Thread(target=app_task_crawl_oj_info, args=(user_id, oj_id))
-    t.start()
 
 
 if __name__ == '__main__':
