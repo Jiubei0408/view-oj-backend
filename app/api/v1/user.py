@@ -83,7 +83,6 @@ def create_user_api():
 
 
 @api.route("/get_user_list", methods=['POST'])
-@login_required
 def get_user_list_api():
     res = get_all_user()
     return jsonify({

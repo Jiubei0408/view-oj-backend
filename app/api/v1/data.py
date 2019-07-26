@@ -45,7 +45,6 @@ def get_accept_problem_distributed_api():
 
 
 @api.route("/get_all_accept_problem_count", methods=['POST'])
-@login_required
 def get_all_accept_problem_count_api():
     form = DateForm().validate_for_api()
     res = list()
