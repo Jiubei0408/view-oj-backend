@@ -7,22 +7,38 @@ from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
 
-class LuoguSpider(BaseSpider):
-    @staticmethod
-    def get_user_info(username):
-        url = 'http://new.npuacm.info/api/crawlers/luogu/{}'.format(username)
-        res = SpiderHttp().get(url=url)
-        res_json = json.loads(res.text)
-        return res_json.get('data', dict()).get('solvedList', list())
-
-    @staticmethod
-    def get_problem_info(problem_id):
-        url = 'https://www.luogu.org/problemnew/show/{}'.format(problem_id)
+class LuoguHttp(SpiderHttp):
+    def __init__(self):
+        super().__init__()
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36',
             'host': 'www.luogu.org'
         }
-        res = SpiderHttp().get(url=url, headers=headers)
+        self.headers.update(headers)
+
+
+class LuoguSpider(BaseSpider):
+    @staticmethod
+    def get_user_id(username):
+        url = 'https://www.luogu.org/space/ajax_getuid?username={}'.format(username)
+        res = LuoguHttp().get(url=url)
+        res_json = json.loads(res.text)
+        return res_json.get('more', dict()).get('uid')
+
+    @classmethod
+    def get_user_info(cls, username):
+        url = 'https://www.luogu.org/space/show?uid={}'.format(cls.get_user_id(username))
+        res = LuoguHttp().get(url=url)
+        r = re.findall(
+            '(?!<span style="display:none">\n)\[<a data-pjax href="/problemnew/show/.*">(.*)</a>\](?!\n</span>)',
+            res.text)
+        return r
+
+    @staticmethod
+    def get_problem_info(problem_id):
+        # TODO 已挂
+        url = 'https://www.luogu.org/problemnew/show/{}'.format(problem_id)
+        res = LuoguHttp().get(url=url)
 
         try:
             total_res = re.search(
@@ -49,4 +65,4 @@ class LuoguSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(LuoguSpider.get_problem_info('P5413'))
+    print(LuoguSpider.get_user_info('taoting'))
