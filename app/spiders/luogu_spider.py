@@ -1,8 +1,9 @@
 import json
 import re
+import execjs
+from urllib.parse import unquote
 
 from app.config.setting import PROBLEM_DEFAULT_RATING
-from app.libs.service import calculate_problem_rating
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
@@ -36,28 +37,33 @@ class LuoguSpider(BaseSpider):
 
     @staticmethod
     def get_problem_info(problem_id):
-        # TODO 已挂
-        url = 'https://www.luogu.org/problemnew/show/{}'.format(problem_id)
+        url = 'https://www.luogu.org/problem/{}'.format(problem_id)
         res = LuoguHttp().get(url=url)
 
         try:
-            total_res = re.search(
-                r'<span class="lg-bignum-num">([\d.]+)(<small>K</small>)*<small></small></span><span class="lg-bignum-text">提交</span>',
-                res.text)
-            total = float(total_res.group(1))
-            if total_res.group(2):
-                total *= 1000
-            total = int(total)
+            res_raw = re.search('decodeURIComponent\("(.*)"\)\);', res.text).group(1)
+            res_str = unquote(res_raw)
+            res_json = execjs.eval(res_str)
 
-            accept_res = re.search(
-                r'<span class="lg-bignum-num">([\d.]+)(<small>K</small>)*<small></small></span><span class="lg-bignum-text">通过</span>',
-                res.text)
-            accept = float(accept_res.group(1))
-            if accept_res.group(2):
-                accept *= 1000
-            accept = int(accept)
+            difficulty = res_json['currentData']['problem']['difficulty']
 
-            rating = calculate_problem_rating(total, accept)
+            if difficulty == 1:
+                rating = 800
+            elif difficulty == 2:
+                rating = 1200
+            elif difficulty == 3:
+                rating = 1600
+            elif difficulty == 4:
+                rating = 2000
+            elif difficulty == 5:
+                rating = 2400
+            elif difficulty == 6:
+                rating = 2800
+            elif difficulty == 7:
+                rating = 3200
+            else:
+                rating = PROBLEM_DEFAULT_RATING
+
         except:
             rating = PROBLEM_DEFAULT_RATING
 
@@ -65,4 +71,4 @@ class LuoguSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(LuoguSpider.get_user_info('taoting'))
+    print(LuoguSpider.get_problem_info('P1002'))
