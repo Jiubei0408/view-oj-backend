@@ -1,44 +1,42 @@
 import datetime
+import json
 
-from sqlalchemy import Column, Integer, DateTime, desc
+from sqlalchemy import desc
 
-from app.models.base import Base, db
-
-
-class Task(Base):
-    __tablename__ = 'task'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, nullable=False)
-    oj_id = Column(Integer, nullable=False)
-    status = Column(Integer, nullable=False)
-    create_time = Column(DateTime, nullable=False)
-    finish_time = Column(DateTime)
+from app.models.base import db
+from app.models.entity import Task
 
 
-def create_task(user_id, oj_id):
+def create_task(task_name, kwargs):
     with db.auto_commit():
         task = Task()
-        task.user_id = user_id
-        task.oj_id = oj_id
+        task.task_name = task_name
+        task.kwargs = json.dumps(kwargs)
         task.status = 0
         task.create_time = datetime.datetime.now()
         db.session.add(task)
 
 
-def get_task():
+def get_an_idle_task():
     return Task.query.filter_by(status=0).order_by(Task.id).first()
+
+
+def start_task(task_id):
+    task = Task.query.get(task_id)
+    with db.auto_commit():
+        task.status = 1
+        task.start_time = datetime.datetime.now()
 
 
 def finish_task(task_id):
     task = Task.query.get(task_id)
     with db.auto_commit():
-        task.status = 1
+        task.status = 2
         task.finish_time = datetime.datetime.now()
 
 
-def task_is_exist(user_id, oj_id):
-    return Task.query.filter_by(user_id=user_id, oj_id=oj_id, status=0).order_by(Task.id).first() is not None
+def get_task(task_name, kwargs):
+    return Task.query.filter_by(task_name=task_name, kwargs=json.dumps(kwargs), status=0).first()
 
 
 def get_all_task():
@@ -47,9 +45,10 @@ def get_all_task():
     for i in r:
         rr.append({
             'id': i.id,
-            'user_id': i.user_id,
-            'oj_id': i.oj_id,
+            'task_name': i.task_name,
+            'kwargs': i.kwargs,
             'create_time': i.create_time,
+            'start_time': i.start_time,
             'finish_time': i.finish_time
         })
     return rr

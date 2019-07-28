@@ -1,10 +1,9 @@
-from flask import jsonify
 from flask_login import login_required, current_user
 
 from app.libs.error_code import Success, Forbidden
 from app.libs.red_print import RedPrint
 from app.models.oj import get_all_oj
-from app.models.task import task_is_exist, create_task, get_all_task
+from app.models.task import create_task, get_task
 from app.models.user import get_all_user
 from app.validators.forms import RefreshForm
 
@@ -15,9 +14,16 @@ api = RedPrint('task')
 @login_required
 def refresh_data_api():
     form = RefreshForm().validate_for_api()
-    if task_is_exist(form.user_id.data, form.oj_id.data):
+    task = get_task('crawl_accept_problem', {
+        'username': form.username.data,
+        'oj_id': form.oj_id.data
+    })
+    if not task or task.status != 2:
         return Forbidden('The mission is not over yet, please do not submit again')
-    create_task(form.user_id.data, form.oj_id.data)
+    create_task('crawl_accept_problem', {
+        'username': form.username.data,
+        'oj_id': form.oj_id.data
+    })
     return Success('Submit refresh request successfully')
 
 
@@ -28,16 +34,14 @@ def refresh_all_data_api():
         raise Forbidden('Only administrators can operate')
     for user in get_all_user():
         for oj in get_all_oj():
-            if oj['status'] and user['status'] and not task_is_exist(user['id'], oj['id']):
-                create_task(user['id'], oj['id'])
+            if oj['status'] and user['status']:
+                task = get_task('crawl_accept_problem', {
+                    'username': user['username'],
+                    'oj_id': oj['id']
+                })
+                if not task or task.status != 2:
+                    create_task('crawl_accept_problem', {
+                        'username': user['username'],
+                        'oj_id': oj['id']
+                    })
     return Success('Submit all refresh request successfully')
-
-
-@api.route("/get_task_list", methods=['POST'])
-@login_required
-def get_task_list():
-    res = get_all_task()
-    return jsonify({
-        'code': 0,
-        'data': res
-    })

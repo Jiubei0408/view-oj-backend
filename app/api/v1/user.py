@@ -1,14 +1,12 @@
 from flask import jsonify
 from flask_login import current_user, login_required, login_user, logout_user
-
 from app.libs.error_code import AuthFailed, Success, Forbidden
 from app.libs.red_print import RedPrint
-from app.models.accept_problem import delete_accept_problem_list
+from app.models.accept_problem import delete_accept_problem_by_oj_id
 from app.models.oj_username import get_user_oj_username, modify_oj_username
-from app.models.task import create_task
 from app.models.user import check_password, get_user_by_username, modify_password, create_user, get_all_user, \
     modify_user
-from app.validators.forms import LoginForm, UserIdForm, OJNameForm, ModifyPasswordForm, CreateUserForm, UserInfoForm
+from app.validators.forms import LoginForm, UsernameForm, OJNameForm, ModifyPasswordForm, CreateUserForm, UserInfoForm
 
 api = RedPrint('user')
 
@@ -39,10 +37,10 @@ def get_user_info_api():
     return jsonify({
         'code': 0,
         'data': {
-            'id': current_user.id,
             'username': current_user.username,
             'nickname': current_user.nickname,
-            'permission': current_user.permission
+            'permission': current_user.permission,
+            'status': current_user.status
         }
     })
 
@@ -50,8 +48,8 @@ def get_user_info_api():
 @api.route("/get_oj_username", methods=['POST'])
 @login_required
 def get_oj_username_api():
-    form = UserIdForm().validate_for_api()
-    res = get_user_oj_username(form.user_id.data)
+    form = UsernameForm().validate_for_api()
+    res = get_user_oj_username(form.username.data)
     return jsonify({
         'code': 0,
         'data': res
@@ -62,9 +60,9 @@ def get_oj_username_api():
 @login_required
 def modify_oj_username_api():
     form = OJNameForm().validate_for_api()
-    modify_oj_username(form.user_id.data, form.oj_id.data, form.username.data)
-    delete_accept_problem_list(form.user_id.data, form.oj_id.data)
-    create_task(form.user_id.data, form.oj_id.data)
+    modify_oj_username(form.username.data, form.oj_id.data, form.oj_username.data)
+    # TODO
+    # delete_accept_problem_by_oj_id(form.username.data, form.oj_id.data)
     return Success('Modify successful')
 
 
@@ -72,7 +70,7 @@ def modify_oj_username_api():
 @login_required
 def modify_password_api():
     form = ModifyPasswordForm().validate_for_api()
-    modify_password(form.user_id.data, form.new_password.data)
+    modify_password(form.username.data, form.new_password.data)
     return Success('Modify successful')
 
 
@@ -99,5 +97,5 @@ def get_user_list_api():
 @login_required
 def modify_user_info_api():
     form = UserInfoForm().validate_for_api()
-    modify_user(form.user_id.data, form.nickname.data, form.permission.data, form.status.data)
+    modify_user(form.username.data, form.nickname.data, form.permission.data, form.status.data)
     return Success('Modify successful')

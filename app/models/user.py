@@ -1,20 +1,7 @@
-from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String
-
 from app import login_manager
 from app.libs.error_code import AuthFailed
-from app.models.base import Base, db
-
-
-class User(UserMixin, Base):
-    __tablename__ = 'user'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(100), unique=True)
-    nickname = Column(String(100), nullable=False)
-    password = Column(String(100), nullable=False)
-    permission = Column(Integer, nullable=False)
-    status = Column(Integer, nullable=False)
+from app.models.base import db
+from app.models.entity import User
 
 
 def create_user(username, nickname):
@@ -37,14 +24,14 @@ def check_password(user, password):
     return user.password == password
 
 
-def modify_password(user_id, password):
-    user = get_user_by_user_id(user_id)
+def modify_password(username, password):
+    user = get_user_by_username(username)
     with db.auto_commit():
         user.password = password
 
 
 def modify_user(user_id, nickname, permission, status):
-    user = get_user_by_user_id(user_id)
+    user = get_user_by_username(user_id)
     with db.auto_commit():
         user.nickname = nickname
         user.permission = permission
@@ -53,7 +40,6 @@ def modify_user(user_id, nickname, permission, status):
 
 def get_all_user():
     return [{
-        'id': i.id,
         'username': i.username,
         'nickname': i.nickname,
         'permission': i.permission,
@@ -62,8 +48,8 @@ def get_all_user():
 
 
 @login_manager.user_loader
-def get_user_by_user_id(user_id):
-    return User.query.get(int(user_id))
+def get_user_by_username(username):
+    return User.query.get(username)
 
 
 @login_manager.unauthorized_handler
@@ -75,5 +61,6 @@ if __name__ == '__main__':
     from app import create_app
 
     with create_app().app_context():
-        r = get_all_user()
-    print(r)
+        r = get_user_by_username('31702411')
+        print(r)
+        print(r.oj_username[0].oj_username)

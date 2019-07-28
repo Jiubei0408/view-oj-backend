@@ -1,14 +1,5 @@
-from sqlalchemy import Column, Integer, String, DateTime
-
-from app.models.base import Base, db
-
-
-class OJ(Base):
-    __tablename__ = 'oj'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(100), unique=True)
-    status = Column(Integer, nullable=False)
+from app.models.base import db
+from app.models.entity import OJ
 
 
 def get_oj_by_oj_id(oj_id):

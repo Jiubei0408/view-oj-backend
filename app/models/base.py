@@ -1,9 +1,7 @@
 from contextlib import contextmanager
-from datetime import datetime
-
 from flask_sqlalchemy import BaseQuery
 from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy
-from sqlalchemy import Column, DateTime, inspect, orm
+from sqlalchemy import inspect, orm
 
 
 class SQLAlchemy(_SQLAlchemy):
