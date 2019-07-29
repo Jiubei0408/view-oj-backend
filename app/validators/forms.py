@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired, ValidationError
 
 from app.libs.error_code import Forbidden
 from app.models.oj import get_oj_by_oj_id
+from app.models.problem import get_problem_by_problem_id
 from app.models.user import get_user_by_username, check_password, get_user_by_username
 from app.validators.base import BaseForm as Form
 
@@ -44,6 +45,14 @@ class OJIdForm(Form):
             raise ValidationError('OJ does not exist')
 
 
+class ProblemIdForm(Form):
+    problem_id = IntegerField(validators=[DataRequired(message='Problem id cannot be empty')])
+
+    def validate_problem_id(self, value):
+        if not get_problem_by_problem_id(self.oj_id.data):
+            raise ValidationError('Problem does not exist')
+
+
 class LoginForm(Form):
     username = StringField(validators=[DataRequired(message='Username cannot be empty')])
     password = StringField(validators=[DataRequired(message='Password cannot be empty')])
@@ -57,7 +66,11 @@ class InquireForm(UsernameForm, DateForm):
     pass
 
 
-class RefreshForm(UsernameForm, OJIdForm):
+class RefreshAcceptProblemForm(UsernameForm, OJIdForm):
+    pass
+
+
+class RefreshProblemRatingForm(ProblemIdForm):
     pass
 
 

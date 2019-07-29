@@ -1,6 +1,8 @@
 import datetime
 import json
 
+from sqlalchemy import desc
+
 from app.models.base import db
 from app.models.entity import Task
 
@@ -34,7 +36,8 @@ def finish_task(task_id):
 
 
 def get_task(task_name, kwargs):
-    return Task.query.filter_by(task_name=task_name, kwargs=json.dumps(kwargs), status=0).first()
+    return Task.query.filter_by(task_name=task_name, kwargs=json.dumps(kwargs), status=0).order_by(
+        desc(Task.id)).first()
 
 
 if __name__ == '__main__':
