@@ -35,7 +35,7 @@ class AcceptProblem(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(100), ForeignKey('user.username'))
-    problem_id = Column(String(100), ForeignKey('problem.id'))
+    problem_id = Column(Integer, ForeignKey('problem.id'))
     problem = relationship("app.models.entity.Problem")
     add_rating = Column(Integer, nullable=False)
     create_time = Column(DateTime, nullable=False)
