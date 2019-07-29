@@ -4,8 +4,8 @@ from app.libs.error_code import AuthFailed, Success, Forbidden
 from app.libs.red_print import RedPrint
 from app.models.accept_problem import delete_accept_problem_by_oj_id
 from app.models.oj_username import get_user_oj_username, modify_oj_username
-from app.models.user import check_password, get_user_by_username, modify_password, create_user, get_all_user, \
-    modify_user
+from app.models.user import check_password, get_user_by_username, modify_password, create_user, modify_user, \
+    get_user_list
 from app.validators.forms import LoginForm, UsernameForm, OJNameForm, ModifyPasswordForm, CreateUserForm, UserInfoForm
 
 api = RedPrint('user')
@@ -61,8 +61,7 @@ def get_oj_username_api():
 def modify_oj_username_api():
     form = OJNameForm().validate_for_api()
     modify_oj_username(form.username.data, form.oj_id.data, form.oj_username.data)
-    # TODO
-    # delete_accept_problem_by_oj_id(form.username.data, form.oj_id.data)
+    delete_accept_problem_by_oj_id(form.username.data, form.oj_id.data)
     return Success('Modify successful')
 
 
@@ -86,7 +85,7 @@ def create_user_api():
 
 @api.route("/get_user_list", methods=['POST'])
 def get_user_list_api():
-    res = get_all_user()
+    res = get_user_list()
     return jsonify({
         'code': 0,
         'data': res

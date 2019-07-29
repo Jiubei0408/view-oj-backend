@@ -1,7 +1,9 @@
-from app.models.accept_problem import add_accept_problem, get_accept_problem_list_by_oj_id
-from app.models.oj import get_oj_by_oj_id, get_oj_id_by_oj_name, get_all_oj
+from app.config.setting import DEFAULT_PROBLEM_RATING
+from app.libs.service import calculate_problem_rating
+from app.models.accept_problem import create_accept_problem, get_accept_problem_list_by_oj_id
+from app.models.oj import get_oj_by_oj_id, get_oj_by_oj_name, get_oj_list
 from app.models.oj_username import get_oj_username
-from app.models.problem import get_problem
+from app.models.problem import get_problem_by_problem_info, get_problem_by_problem_id, modify_problem_rating
 # 导入spider
 from app.spiders.codeforces_spider import CodeforcesSpider
 from app.spiders.hdu_spider import HduSpider
@@ -20,7 +22,7 @@ def crawl_accept_problem(username, oj_id):
     oj_spider = globals()[oj_name.title() + 'Spider']
 
     already_accept_problem = dict()
-    for i in get_all_oj():
+    for i in get_oj_list():
         already_accept_problem[i['id']] = set(get_accept_problem_list_by_oj_id(username, i['id']))
 
     all_accept_problem = oj_spider.get_user_info(oj_username)
@@ -35,7 +37,7 @@ def crawl_accept_problem(username, oj_id):
             if real_oj_name == 'gym':
                 real_oj_name = 'codeforces'
 
-            real_oj_id = get_oj_id_by_oj_name(real_oj_name)
+            real_oj_id = get_oj_by_oj_name(real_oj_name).id
         elif oj_name == 'luogu':
             if problem_id[0] == 'P':
                 real_oj_name = 'luogu'
@@ -55,13 +57,25 @@ def crawl_accept_problem(username, oj_id):
             else:
                 continue
 
-            real_oj_id = get_oj_id_by_oj_name(real_oj_name)
+            real_oj_id = get_oj_by_oj_name(real_oj_name).id
         elif oj_name == 'codeforces':
             problem_id = "".join(problem_id.split('-'))
 
         if problem_id not in already_accept_problem.get(real_oj_id, set()):
-            problem = get_problem(real_oj_id, problem_id)
-            add_accept_problem(username, problem.id, 0)
+            problem = get_problem_by_problem_info(real_oj_id, problem_id)
+            create_accept_problem(username, problem.id, 0)
+
+
+def crawl_problem_rating(problem_id):
+    problem = get_problem_by_problem_id(problem_id)
+    if problem.oj.status == 0:
+        modify_problem_rating(problem_id, DEFAULT_PROBLEM_RATING)
+        return
+    oj_name = problem.oj.name
+    oj_spider = globals()[oj_name.title() + 'Spider']
+    problem_pid = problem.problem_pid
+    rating = oj_spider.get_problem_info(problem_pid)['rating']
+    modify_problem_rating(problem_id, rating)
 
 
 if __name__ == '__main__':

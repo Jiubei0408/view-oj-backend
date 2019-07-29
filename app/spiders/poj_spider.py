@@ -1,7 +1,7 @@
 import json
 import re
 
-from app.config.setting import PROBLEM_DEFAULT_RATING
+from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.libs.service import calculate_problem_rating
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
@@ -24,7 +24,7 @@ class PojSpider(BaseSpider):
             accept = int(re.search(r'<td><b>Accepted:</b> (\d+)</td>', res.text).group(1))
             rating = calculate_problem_rating(total, accept)
         except:
-            rating = PROBLEM_DEFAULT_RATING
+            rating = DEFAULT_PROBLEM_RATING
 
         return {'rating': rating}
 

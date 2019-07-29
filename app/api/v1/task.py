@@ -2,9 +2,9 @@ from flask_login import login_required, current_user
 
 from app.libs.error_code import Success, Forbidden
 from app.libs.red_print import RedPrint
-from app.models.oj import get_all_oj
+from app.models.oj import get_oj_list
 from app.models.task import create_task, get_task
-from app.models.user import get_all_user
+from app.models.user import get_user_list
 from app.validators.forms import RefreshForm
 
 api = RedPrint('task')
@@ -32,8 +32,8 @@ def refresh_data_api():
 def refresh_all_data_api():
     if not current_user.permission:
         raise Forbidden('Only administrators can operate')
-    for user in get_all_user():
-        for oj in get_all_oj():
+    for user in get_user_list():
+        for oj in get_oj_list():
             if oj['status'] and user['status']:
                 task = get_task('crawl_accept_problem', {
                     'username': user['username'],

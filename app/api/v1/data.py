@@ -3,7 +3,7 @@ from flask_login import login_required
 from app.libs.red_print import RedPrint
 from app.models.accept_problem import get_accept_problem_list_by_date, get_accept_problem_count_by_date, \
     get_accept_problem_distributed
-from app.models.user import get_all_user
+from app.models.user import get_user_list
 from app.validators.forms import DateForm, UsernameForm, InquireForm
 
 api = RedPrint('data')
@@ -35,7 +35,7 @@ def get_accept_problem_distributed_api():
 def get_all_accept_problem_count_api():
     form = DateForm().validate_for_api()
     res = list()
-    for user in get_all_user():
+    for user in get_user_list():
         if user['status']:
             res.append({
                 'username': user['username'],

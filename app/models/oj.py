@@ -3,10 +3,10 @@ from app.models.entity import OJ
 
 
 def get_oj_by_oj_id(oj_id):
-    return OJ.query.get(oj_id).name
+    return OJ.query.get(oj_id)
 
 
-def get_all_oj():
+def get_oj_list():
     return [{
         'id': i.id,
         'name': i.name,
@@ -23,11 +23,12 @@ def add_oj(oj_name):
     return oj
 
 
-def get_oj_id_by_oj_name(oj_name):
+def get_oj_by_oj_name(oj_name):
     oj = OJ.query.filter_by(name=oj_name).first()
-    if not oj:
-        return add_oj(oj_name).id
-    return oj.id
+    if oj:
+        return oj
+    else:
+        return add_oj(oj_name)
 
 
 if __name__ == '__main__':

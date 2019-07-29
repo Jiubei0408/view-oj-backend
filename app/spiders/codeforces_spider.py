@@ -1,7 +1,7 @@
 import json
 import re
 
-from app.config.setting import PROBLEM_DEFAULT_RATING
+from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
@@ -23,9 +23,9 @@ class CodeforcesSpider(BaseSpider):
             try:
                 rating = int(re.search(r'title="Difficulty">\s*\*(\d+)\s*</span>', res.text).group(1))
             except:
-                rating = PROBLEM_DEFAULT_RATING
+                rating = DEFAULT_PROBLEM_RATING
         else:  # gym
-            rating = PROBLEM_DEFAULT_RATING
+            rating = DEFAULT_PROBLEM_RATING
 
         return {'rating': rating}
 

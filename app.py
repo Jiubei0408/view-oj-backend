@@ -7,7 +7,7 @@ from app import create_app
 from app.libs.error import APIException
 from app.libs.error_code import ServerError
 from app.models.task import finish_task, get_an_idle_task, start_task
-from app.spiders.oj_spider import crawl_accept_problem
+from app.spiders.oj_spider import crawl_accept_problem, crawl_problem_rating
 from threading import Thread
 
 app = create_app()
@@ -42,7 +42,7 @@ def task_executor():
                         if task.task_name == 'crawl_accept_problem':
                             crawl_accept_problem(**json.loads(task.kwargs))
                         elif task.task_name == 'crawl_problem_rating':
-                            pass
+                            crawl_problem_rating(**json.loads(task.kwargs))
                     except:
                         pass
                     finish_task(task.id)

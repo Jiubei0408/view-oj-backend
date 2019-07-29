@@ -3,7 +3,7 @@ import re
 import execjs
 from urllib.parse import unquote
 
-from app.config.setting import PROBLEM_DEFAULT_RATING
+from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
@@ -62,10 +62,10 @@ class LuoguSpider(BaseSpider):
             elif difficulty == 7:
                 rating = 3200
             else:
-                rating = PROBLEM_DEFAULT_RATING
+                rating = DEFAULT_PROBLEM_RATING
 
         except:
-            rating = PROBLEM_DEFAULT_RATING
+            rating = DEFAULT_PROBLEM_RATING
 
         return {'rating': rating}
 

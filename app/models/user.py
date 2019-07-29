@@ -38,7 +38,7 @@ def modify_user(user_id, nickname, permission, status):
         user.status = status
 
 
-def get_all_user():
+def get_user_list():
     return [{
         'username': i.username,
         'nickname': i.nickname,
