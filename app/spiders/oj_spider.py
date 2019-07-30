@@ -1,10 +1,11 @@
 from app.config.setting import DEFAULT_PROBLEM_RATING
-from app.libs.service import calculate_problem_rating
-from app.models.accept_problem import create_accept_problem, get_accept_problem_list_by_oj_id
+from app.models.accept_problem import create_accept_problem, get_accept_problem_list_by_oj_id, \
+    modify_rating_by_problem_id
 from app.models.oj import get_oj_by_oj_id, get_oj_by_oj_name, get_oj_list
 from app.models.oj_username import get_oj_username
 from app.models.problem import get_problem_by_problem_info, get_problem_by_problem_id, modify_problem_rating
 # 导入spider
+from app.models.task import get_task, create_task
 from app.spiders.codeforces_spider import CodeforcesSpider
 from app.spiders.hdu_spider import HduSpider
 from app.spiders.luogu_spider import LuoguSpider
@@ -15,7 +16,7 @@ from app.spiders.zucc_spider import ZuccSpider
 
 
 def crawl_accept_problem(username, oj_id):
-    oj_name = get_oj_by_oj_id(oj_id)
+    oj_name = get_oj_by_oj_id(oj_id).name
     oj_username = get_oj_username(username, oj_id)
     if not oj_username:
         return
@@ -64,6 +65,13 @@ def crawl_accept_problem(username, oj_id):
         if problem_id not in already_accept_problem.get(real_oj_id, set()):
             problem = get_problem_by_problem_info(real_oj_id, problem_id)
             create_accept_problem(username, problem.id, 0)
+            task = get_task('crawl_problem_rating', {
+                'problem_id': problem_id
+            })
+            if not task or task.status != 2:
+                create_task('crawl_problem_rating', {
+                    'problem_id': problem_id
+                })
 
 
 def crawl_problem_rating(problem_id):
@@ -76,11 +84,12 @@ def crawl_problem_rating(problem_id):
     problem_pid = problem.problem_pid
     rating = oj_spider.get_problem_info(problem_pid)['rating']
     modify_problem_rating(problem_id, rating)
+    modify_rating_by_problem_id(problem_id)
 
 
 if __name__ == '__main__':
     from app import create_app
 
     with create_app().app_context():
-        r = crawl_accept_problem('31702411', 1)
+        r = crawl_problem_rating(1)
     print(r)

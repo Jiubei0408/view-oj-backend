@@ -39,10 +39,11 @@ def task_executor():
                 if task:
                     start_task(task.id)
                     try:
+                        kwargs = json.loads(task.kwargs)
                         if task.task_name == 'crawl_accept_problem':
-                            crawl_accept_problem(**json.loads(task.kwargs))
+                            crawl_accept_problem(**kwargs)
                         elif task.task_name == 'crawl_problem_rating':
-                            crawl_problem_rating(**json.loads(task.kwargs))
+                            crawl_problem_rating(**kwargs)
                     except:
                         pass
                     finish_task(task.id)

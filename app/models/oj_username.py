@@ -35,12 +35,14 @@ def get_user_oj_username(username):
     r = list()
     for i in oj_list:
         if i['status']:
-            oj_username = OJUsername.query.filter_by(username=username, oj_id=i['oj_id']).first()
+            oj_username = OJUsername.query.filter_by(username=username, oj_id=i['id']).first()
             if oj_username is None:
                 oj_username = ""
+            else:
+                oj_username = oj_username.oj_username
             r.append({
-                'oj_id': i['oj_id'],
-                'oj_name': i['oj_name'],
+                'oj_id': i['id'],
+                'oj_name': i['name'],
                 'oj_username': oj_username
             })
     return r

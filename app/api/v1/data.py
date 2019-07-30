@@ -2,33 +2,11 @@ from flask import jsonify
 from flask_login import login_required
 from app.libs.red_print import RedPrint
 from app.models.accept_problem import get_accept_problem_list_by_date, get_accept_problem_count_by_date, \
-    get_accept_problem_distributed
+    get_accept_problem_oj_distributed, get_accept_problem_date_distributed, get_rating_by_username, get_rating_rank_list
 from app.models.user import get_user_list
-from app.validators.forms import DateForm, UsernameForm, InquireForm
+from app.validators.forms import DateForm, UsernameForm, InquireForm, InquireCountForm
 
 api = RedPrint('data')
-
-
-@api.route("/get_accept_problem", methods=['POST'])
-@login_required
-def get_accept_problem_api():
-    form = InquireForm().validate_for_api()
-    res = get_accept_problem_list_by_date(form.username.data, form.start_date.data, form.end_date.data)
-    return jsonify({
-        'code': 0,
-        'data': res
-    })
-
-
-@api.route("/get_accept_problem_distributed", methods=['POST'])
-@login_required
-def get_accept_problem_distributed_api():
-    form = UsernameForm().validate_for_api()
-    res = get_accept_problem_distributed(form.username.data)
-    return jsonify({
-        'code': 0,
-        'data': res
-    })
 
 
 @api.route("/get_all_accept_problem_count", methods=['POST'])
@@ -43,6 +21,48 @@ def get_all_accept_problem_count_api():
                 'accept_problem_count': get_accept_problem_count_by_date(user['username'], form.start_date.data,
                                                                          form.end_date.data)
             })
+    return jsonify({
+        'code': 0,
+        'data': res
+    })
+
+
+@api.route("/get_accept_problem", methods=['POST'])
+@login_required
+def get_accept_problem_api():
+    form = InquireForm().validate_for_api()
+    res = get_accept_problem_list_by_date(form.username.data, form.start_date.data, form.end_date.data,
+                                          form.page.data, form.page_size.data)
+    return jsonify({
+        'code': 0,
+        'data': res
+    })
+
+
+@api.route("/get_accept_problem_oj_distributed", methods=['POST'])
+@login_required
+def get_accept_problem_distributed_api():
+    form = UsernameForm().validate_for_api()
+    res = get_accept_problem_oj_distributed(form.username.data)
+    return jsonify({
+        'code': 0,
+        'data': res
+    })
+
+
+@api.route("/get_accept_problem_count_distributed", methods=['POST'])
+def get_accept_problem_count_distributed_api():
+    form = InquireCountForm().validate_for_api()
+    res = get_accept_problem_date_distributed(form.username.data, form.start_date.data, form.end_date.data)
+    return jsonify({
+        'code': 0,
+        'data': res
+    })
+
+
+@api.route("/get_rating_rank_list", methods=['POST'])
+def get_rating_rank_list_api():
+    res = get_rating_rank_list()
     return jsonify({
         'code': 0,
         'data': res

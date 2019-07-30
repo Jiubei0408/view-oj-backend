@@ -7,7 +7,7 @@ from wtforms.validators import DataRequired, ValidationError
 from app.libs.error_code import Forbidden
 from app.models.oj import get_oj_by_oj_id
 from app.models.problem import get_problem_by_problem_id
-from app.models.user import get_user_by_username, check_password, get_user_by_username
+from app.models.user import check_password, get_user_by_username
 from app.validators.base import BaseForm as Form
 
 
@@ -62,7 +62,16 @@ class OJNameForm(UsernameForm, OJIdForm):
     oj_username = StringField()
 
 
-class InquireForm(UsernameForm, DateForm):
+class PageForm(Form):
+    page = IntegerField(validators=[DataRequired(message='Page cannot be empty')])
+    page_size = IntegerField(validators=[DataRequired(message='Page size cannot be empty')])
+
+
+class InquireForm(UsernameForm, DateForm, PageForm):
+    pass
+
+
+class InquireCountForm(UsernameForm, DateForm):
     pass
 
 

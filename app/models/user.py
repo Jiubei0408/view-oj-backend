@@ -1,3 +1,5 @@
+from sqlalchemy import desc
+
 from app import login_manager
 from app.libs.error_code import AuthFailed
 from app.models.base import db
@@ -14,10 +16,6 @@ def create_user(username, nickname):
         user.status = 1
         db.session.add(user)
     return user
-
-
-def get_user_by_username(username):
-    return User.query.filter_by(username=username).first()
 
 
 def check_password(user, password):
@@ -44,7 +42,7 @@ def get_user_list():
         'nickname': i.nickname,
         'permission': i.permission,
         'status': i.status
-    } for i in User.query.order_by(User.username).all()]
+    } for i in User.query.order_by(desc(User.username)).all()]
 
 
 @login_manager.user_loader

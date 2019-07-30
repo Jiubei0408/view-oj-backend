@@ -70,3 +70,21 @@ class Task(Base):
     create_time = Column(DateTime, nullable=False)
     start_time = Column(DateTime)
     finish_time = Column(DateTime)
+
+
+class ProblemSet(Base):
+    __tablename__ = 'problem_set'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), unique=True)
+    problem = relationship("app.models.entity.ProblemRelationship", back_populates="problem_set")
+
+
+class ProblemRelationship(Base):
+    __tablename__ = 'problem_relationship'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    problem_id = Column(Integer, ForeignKey('problem.id'))
+    problem = relationship("app.models.entity.Problem")
+    problem_set_id = Column(Integer, ForeignKey('problem_set.id'))
+    problem_set = relationship("app.models.entity.ProblemSet")

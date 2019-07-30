@@ -38,7 +38,7 @@ def refresh_accept_problem_api():
         'username': form.username.data,
         'oj_id': form.oj_id.data
     })
-    if not task or task.status != 2:
+    if task and task.status != 2:
         return Forbidden('The mission is not over yet, please do not submit again')
     create_task('crawl_accept_problem', {
         'username': form.username.data,
@@ -54,7 +54,7 @@ def refresh_problem_rating_api():
     task = get_task('crawl_problem_rating', {
         'problem_id': form.problem_id.data,
     })
-    if not task or task.status != 2:
+    if task and task.status != 2:
         return Forbidden('The mission is not over yet, please do not submit again')
     create_task('crawl_problem_rating', {
         'problem_id': form.problem_id.data,
