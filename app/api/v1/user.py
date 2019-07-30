@@ -38,7 +38,9 @@ def get_user_info_api():
         'code': 0,
         'data': {
             'username': current_user.username,
-            'nickname': current_user.nickname
+            'nickname': current_user.nickname,
+            'permission': current_user.permission,
+            'status': current_user.status
         }
     })
 
@@ -52,9 +54,7 @@ def get_user_info_by_username_api():
         'code': 0,
         'data': {
             'username': user.username,
-            'nickname': user.nickname,
-            'permission': user.permission,
-            'status': user.status
+            'nickname': user.nickname
         }
     })
 

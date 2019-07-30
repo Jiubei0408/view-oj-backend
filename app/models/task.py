@@ -40,9 +40,13 @@ def get_task(task_name, kwargs):
         desc(Task.id)).first()
 
 
+def get_task_count():
+    return Task.query.filter(Task.status != 2).count()
+
+
 if __name__ == '__main__':
     from app import create_app
 
     with create_app().app_context():
-        r = finish_task(1, 2)
+        r = get_task_count()
     print(r)

@@ -1,9 +1,10 @@
+from flask import jsonify
 from flask_login import login_required, current_user
 
 from app.libs.error_code import Success, Forbidden
 from app.libs.red_print import RedPrint
 from app.models.oj import get_oj_list
-from app.models.task import create_task, get_task
+from app.models.task import create_task, get_task, get_task_count
 from app.models.user import get_user_list
 from app.validators.forms import RefreshAcceptProblemForm, RefreshProblemRatingForm
 
@@ -60,3 +61,13 @@ def refresh_problem_rating_api():
         'problem_id': form.problem_id.data,
     })
     return Success('Submit refresh request successfully')
+
+
+@api.route("/get_task_count", methods=['POST'])
+@login_required
+def get_task_count_api():
+    res = get_task_count()
+    return jsonify({
+        'code': 0,
+        'data': res
+    })
