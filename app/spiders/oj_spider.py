@@ -68,7 +68,7 @@ def crawl_accept_problem(username, oj_id):
             task = get_task('crawl_problem_rating', {
                 'problem_id': problem.id
             })
-            if not task or task.status != 2:
+            if not task or task.status == 2:
                 create_task('crawl_problem_rating', {
                     'problem_id': problem.id
                 })
