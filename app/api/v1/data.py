@@ -27,6 +27,15 @@ def get_all_accept_problem_count_api():
     })
 
 
+@api.route("/get_rating_rank_list", methods=['POST'])
+def get_rating_rank_list_api():
+    res = get_rating_rank_list()
+    return jsonify({
+        'code': 0,
+        'data': res
+    })
+
+
 @api.route("/get_accept_problem", methods=['POST'])
 @login_required
 def get_accept_problem_api():
@@ -51,18 +60,10 @@ def get_accept_problem_distributed_api():
 
 
 @api.route("/get_accept_problem_count_distributed", methods=['POST'])
+@login_required
 def get_accept_problem_count_distributed_api():
     form = InquireCountForm().validate_for_api()
     res = get_accept_problem_date_distributed(form.username.data, form.start_date.data, form.end_date.data)
-    return jsonify({
-        'code': 0,
-        'data': res
-    })
-
-
-@api.route("/get_rating_rank_list", methods=['POST'])
-def get_rating_rank_list_api():
-    res = get_rating_rank_list()
     return jsonify({
         'code': 0,
         'data': res

@@ -38,9 +38,23 @@ def get_user_info_api():
         'code': 0,
         'data': {
             'username': current_user.username,
-            'nickname': current_user.nickname,
-            'permission': current_user.permission,
-            'status': current_user.status
+            'nickname': current_user.nickname
+        }
+    })
+
+
+@api.route("/get_user_info_by_username", methods=['POST'])
+@login_required
+def get_user_info_by_username_api():
+    form = UsernameForm().validate_for_api()
+    user = get_user_by_username(form.username.data)
+    return jsonify({
+        'code': 0,
+        'data': {
+            'username': user.username,
+            'nickname': user.nickname,
+            'permission': user.permission,
+            'status': user.status
         }
     })
 

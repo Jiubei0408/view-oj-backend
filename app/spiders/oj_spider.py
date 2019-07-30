@@ -66,11 +66,11 @@ def crawl_accept_problem(username, oj_id):
             problem = get_problem_by_problem_info(real_oj_id, problem_id)
             create_accept_problem(username, problem.id, 0)
             task = get_task('crawl_problem_rating', {
-                'problem_id': problem_id
+                'problem_id': problem.id
             })
             if not task or task.status != 2:
                 create_task('crawl_problem_rating', {
-                    'problem_id': problem_id
+                    'problem_id': problem.id
                 })
 
 
@@ -91,5 +91,5 @@ if __name__ == '__main__':
     from app import create_app
 
     with create_app().app_context():
-        r = crawl_problem_rating(1)
+        r = crawl_problem_rating(6)
     print(r)

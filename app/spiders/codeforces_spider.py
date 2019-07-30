@@ -16,7 +16,9 @@ class CodeforcesSpider(BaseSpider):
 
     @staticmethod
     def get_problem_info(problem_id):
-        problem_id_1, problem_id_2 = problem_id.split('-')
+        p = re.match('^([0-9]+)([a-zA-Z]+[0-9]*)$', problem_id)
+        problem_id_1 = p.group(1)
+        problem_id_2 = p.group(2)
         if int(problem_id_1) < 100000:  # 题目
             url = 'https://codeforces.com/problemset/problem/{}/{}'.format(problem_id_1, problem_id_2)
             res = SpiderHttp().get(url=url)
@@ -31,4 +33,4 @@ class CodeforcesSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(CodeforcesSpider.get_user_info('taoting'))
+    print(CodeforcesSpider.get_problem_info('1197F'))

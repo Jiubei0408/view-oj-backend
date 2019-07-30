@@ -1,12 +1,13 @@
 import datetime
 
 from flask_login import current_user
-from wtforms import DateField, IntegerField, StringField
+from wtforms import DateField, IntegerField, StringField, FieldList
 from wtforms.validators import DataRequired, ValidationError
 
 from app.libs.error_code import Forbidden
 from app.models.oj import get_oj_by_oj_id
 from app.models.problem import get_problem_by_problem_id
+from app.models.problem_set import get_problem_set_by_problem_id
 from app.models.user import check_password, get_user_by_username
 from app.validators.base import BaseForm as Form
 
@@ -35,6 +36,8 @@ class UsernameForm(Form):
     def validate_username(self, value):
         if not current_user.permission and current_user.username != self.username.data:
             raise Forbidden()
+        if not get_user_by_username(self.username.data):
+            raise ValidationError('Username does not exist')
 
 
 class OJIdForm(Form):
@@ -49,8 +52,16 @@ class ProblemIdForm(Form):
     problem_id = IntegerField(validators=[DataRequired(message='Problem id cannot be empty')])
 
     def validate_problem_id(self, value):
-        if not get_problem_by_problem_id(self.oj_id.data):
+        if not get_problem_by_problem_id(self.problem_id.data):
             raise ValidationError('Problem does not exist')
+
+
+class ProblemSetIdForm(Form):
+    problem_set_id = IntegerField(validators=[DataRequired(message='Problem set id cannot be empty')])
+
+    def validate_problem_set_id(self, value):
+        if not get_problem_set_by_problem_id(self.problem_set_id.data):
+            raise ValidationError('Problem set does not exist')
 
 
 class LoginForm(Form):
@@ -66,21 +77,13 @@ class PageForm(Form):
     page = IntegerField(validators=[DataRequired(message='Page cannot be empty')])
     page_size = IntegerField(validators=[DataRequired(message='Page size cannot be empty')])
 
+    def validate_page(self, value):
+        if self.page.data <= 0:
+            raise ValidationError('Page must >= 1')
 
-class InquireForm(UsernameForm, DateForm, PageForm):
-    pass
-
-
-class InquireCountForm(UsernameForm, DateForm):
-    pass
-
-
-class RefreshAcceptProblemForm(UsernameForm, OJIdForm):
-    pass
-
-
-class RefreshProblemRatingForm(ProblemIdForm):
-    pass
+    def validate_page_size(self, value):
+        if self.page_size.data > 100:
+            raise ValidationError('Page size must <= 100')
 
 
 class ModifyPasswordForm(UsernameForm):
@@ -114,3 +117,29 @@ class UserInfoForm(UsernameForm):
         if not current_user.permission:
             if self.permission.data != 0:
                 raise Forbidden()
+
+
+class ProblemSetInfoForm(Form):
+    problem_set_name = StringField(validators=[DataRequired(message='Problem set name cannot be empty')])
+    problem_id_list = FieldList(IntegerField(validators=[DataRequired(message='Problem id cannot be empty')]),
+                                min_entries=2)
+
+
+class ModifyProblemSetForm(ProblemSetIdForm, ProblemSetInfoForm):
+    pass
+
+
+class InquireForm(UsernameForm, DateForm, PageForm):
+    pass
+
+
+class InquireCountForm(UsernameForm, DateForm):
+    pass
+
+
+class RefreshAcceptProblemForm(UsernameForm, OJIdForm):
+    pass
+
+
+class RefreshProblemRatingForm(ProblemIdForm):
+    pass

@@ -76,8 +76,9 @@ class ProblemSet(Base):
     __tablename__ = 'problem_set'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(100), unique=True)
+    name = Column(String(100))
     problem = relationship("app.models.entity.ProblemRelationship", back_populates="problem_set")
+    create_time = Column(DateTime)
 
 
 class ProblemRelationship(Base):
