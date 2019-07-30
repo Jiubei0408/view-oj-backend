@@ -23,7 +23,7 @@ def refresh_all_data_api():
                     'username': user['username'],
                     'oj_id': oj['id']
                 })
-                if not task or task.status != 2:
+                if not task or task.status == 2:
                     create_task('crawl_accept_problem', {
                         'username': user['username'],
                         'oj_id': oj['id']

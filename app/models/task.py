@@ -36,7 +36,7 @@ def finish_task(task_id):
 
 
 def get_task(task_name, kwargs):
-    return Task.query.filter_by(task_name=task_name, kwargs=json.dumps(kwargs), status=0).order_by(
+    return Task.query.filter_by(task_name=task_name, kwargs=json.dumps(kwargs)).order_by(
         desc(Task.id)).first()
 
 

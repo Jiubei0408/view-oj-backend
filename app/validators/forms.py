@@ -18,13 +18,13 @@ class DateForm(Form):
 
     def validate_start_date(self, value):
         if self.start_date.data:
-            self.start_date.data = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d')
+            self.start_date.data = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d').date()
         else:
             self.start_date.data = datetime.date.today() - datetime.timedelta(days=7)
 
     def validate_end_date(self, value):
         if self.end_date.data:
-            self.end_date.data = datetime.datetime.strptime(self.end_date.data, '%Y-%m-%d')
+            self.end_date.data = datetime.datetime.strptime(self.end_date.data, '%Y-%m-%d').date()
         else:
             self.end_date.data = datetime.date.today()
         self.end_date.data += datetime.timedelta(days=1)

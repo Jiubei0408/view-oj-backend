@@ -95,7 +95,8 @@ def modify_rating_by_problem_id(problem_id):
     if r:
         for i in r:
             with db.auto_commit():
-                i.add_rating = calculate_user_rating(get_rating_by_problem_id(i.username, problem_id), problem.rating)
+                user_rating = get_rating_by_problem_id(i.username, problem_id)
+                i.add_rating = calculate_user_rating(user_rating, problem.rating)
 
 
 def delete_accept_problem_by_oj_id(username, oj_id):
@@ -109,11 +110,14 @@ def delete_accept_problem_by_oj_id(username, oj_id):
 def get_rating_by_problem_id(username, problem_id):
     problem = AcceptProblem.query.filter_by(problem_id=problem_id, username=username).first()
     if problem:
-        rating = int(db.session.query(func.sum(AcceptProblem.add_rating)).filter(
+        rating = db.session.query(func.sum(AcceptProblem.add_rating)).filter(
             AcceptProblem.username == username,
             AcceptProblem.id < problem.id
-        ).first()[0]) + DEFAULT_USER_RATING
-
+        ).first()[0]
+        if rating:
+            rating = int(rating) + DEFAULT_USER_RATING
+        else:
+            rating = DEFAULT_USER_RATING
     else:
         rating = get_rating_by_username(username)
     return rating

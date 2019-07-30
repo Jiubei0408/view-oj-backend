@@ -91,5 +91,5 @@ if __name__ == '__main__':
     from app import create_app
 
     with create_app().app_context():
-        r = crawl_problem_rating(6)
+        r = crawl_problem_rating(2)
     print(r)
