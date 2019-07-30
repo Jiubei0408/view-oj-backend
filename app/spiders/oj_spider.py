@@ -78,6 +78,7 @@ def crawl_problem_rating(problem_id):
     problem = get_problem_by_problem_id(problem_id)
     if problem.oj.status == 0:
         modify_problem_rating(problem_id, DEFAULT_PROBLEM_RATING)
+        modify_rating_by_problem_id(problem_id)
         return
     oj_name = problem.oj.name
     oj_spider = globals()[oj_name.title() + 'Spider']
