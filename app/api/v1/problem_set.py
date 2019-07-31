@@ -34,7 +34,6 @@ def delete_problem_set_api():
 
 
 @api.route("/get_problem_set_list", methods=['POST'])
-@login_required
 def get_problem_set_list_api():
     form = PageForm().validate_for_api()
     res = get_problem_set_list(form.page.data, form.page_size.data)

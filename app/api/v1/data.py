@@ -1,10 +1,9 @@
 from flask import jsonify
-from flask_login import login_required
 from app.libs.red_print import RedPrint
 from app.models.accept_problem import get_accept_problem_list_by_date, get_accept_problem_count_by_date, \
-    get_accept_problem_oj_distributed, get_accept_problem_date_distributed, get_rating_by_username, get_rating_rank_list
+    get_accept_problem_oj_distributed, get_accept_problem_date_distributed, get_rating_rank_list
 from app.models.user import get_user_list
-from app.validators.forms import DateForm, UsernameForm, InquireForm, InquireCountForm
+from app.validators.forms import DateForm, InquireForm, InquireCountForm, NoAuthUsernameForm
 
 api = RedPrint('data')
 
@@ -37,7 +36,6 @@ def get_rating_rank_list_api():
 
 
 @api.route("/get_accept_problem", methods=['POST'])
-@login_required
 def get_accept_problem_api():
     form = InquireForm().validate_for_api()
     res = get_accept_problem_list_by_date(form.username.data, form.start_date.data, form.end_date.data,
@@ -49,9 +47,8 @@ def get_accept_problem_api():
 
 
 @api.route("/get_accept_problem_oj_distributed", methods=['POST'])
-@login_required
 def get_accept_problem_distributed_api():
-    form = UsernameForm().validate_for_api()
+    form = NoAuthUsernameForm().validate_for_api()
     res = get_accept_problem_oj_distributed(form.username.data)
     return jsonify({
         'code': 0,
@@ -60,7 +57,6 @@ def get_accept_problem_distributed_api():
 
 
 @api.route("/get_accept_problem_count_distributed", methods=['POST'])
-@login_required
 def get_accept_problem_count_distributed_api():
     form = InquireCountForm().validate_for_api()
     res = get_accept_problem_date_distributed(form.username.data, form.start_date.data, form.end_date.data)

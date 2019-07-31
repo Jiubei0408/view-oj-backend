@@ -64,7 +64,6 @@ def refresh_problem_rating_api():
 
 
 @api.route("/get_task_count", methods=['POST'])
-@login_required
 def get_task_count_api():
     res = get_task_count()
     return jsonify({

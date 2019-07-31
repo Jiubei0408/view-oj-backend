@@ -40,6 +40,14 @@ class UsernameForm(Form):
             raise ValidationError('Username does not exist')
 
 
+class NoAuthUsernameForm(Form):
+    username = StringField(validators=[DataRequired(message='Username cannot be empty')])
+
+    def validate_username(self, value):
+        if not get_user_by_username(self.username.data):
+            raise ValidationError('Username does not exist')
+
+
 class OJIdForm(Form):
     oj_id = IntegerField(validators=[DataRequired(message='OJ id cannot be empty')])
 
@@ -129,15 +137,15 @@ class ModifyProblemSetForm(ProblemSetIdForm, ProblemSetInfoForm):
     pass
 
 
-class InquireForm(UsernameForm, DateForm, PageForm):
+class InquireForm(NoAuthUsernameForm, DateForm, PageForm):
     pass
 
 
-class InquireCountForm(UsernameForm, DateForm):
+class InquireCountForm(NoAuthUsernameForm, DateForm):
     pass
 
 
-class RefreshAcceptProblemForm(UsernameForm, OJIdForm):
+class RefreshAcceptProblemForm(NoAuthUsernameForm, OJIdForm):
     pass
 
 

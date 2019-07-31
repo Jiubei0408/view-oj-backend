@@ -6,7 +6,8 @@ from app.models.accept_problem import delete_accept_problem_by_oj_id
 from app.models.oj_username import get_user_oj_username, modify_oj_username
 from app.models.user import check_password, get_user_by_username, modify_password, create_user, modify_user, \
     get_user_list
-from app.validators.forms import LoginForm, OJNameForm, ModifyPasswordForm, CreateUserForm, UserInfoForm, UsernameForm
+from app.validators.forms import LoginForm, OJNameForm, ModifyPasswordForm, CreateUserForm, UserInfoForm, \
+    NoAuthUsernameForm
 
 api = RedPrint('user')
 
@@ -46,9 +47,8 @@ def get_user_info_api():
 
 
 @api.route("/get_user_info_by_username", methods=['POST'])
-@login_required
 def get_user_info_by_username_api():
-    form = UsernameForm().validate_for_api()
+    form = NoAuthUsernameForm().validate_for_api()
     user = get_user_by_username(form.username.data)
     return jsonify({
         'code': 0,
@@ -60,9 +60,8 @@ def get_user_info_by_username_api():
 
 
 @api.route("/get_oj_username", methods=['POST'])
-@login_required
 def get_oj_username_api():
-    form = UsernameForm().validate_for_api()
+    form = NoAuthUsernameForm().validate_for_api()
     res = get_user_oj_username(form.username.data)
     return jsonify({
         'code': 0,
