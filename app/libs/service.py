@@ -17,4 +17,4 @@ def calculate_problem_rating(total, accept):
 
 
 def calculate_user_rating(user_rating, problem_rating):
-    return int((problem_rating / user_rating) ** 2 * 10)
+    return int((problem_rating / user_rating) ** 2 * 5)

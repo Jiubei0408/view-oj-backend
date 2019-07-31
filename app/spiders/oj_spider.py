@@ -1,6 +1,7 @@
 from app.config.setting import DEFAULT_PROBLEM_RATING
+from app.libs.service import calculate_user_rating
 from app.models.accept_problem import create_accept_problem, get_accept_problem_list_by_oj_id, \
-    modify_rating_by_problem_id
+    modify_rating_by_problem_id, get_rating_by_username
 from app.models.oj import get_oj_by_oj_id, get_oj_by_oj_name, get_oj_list
 from app.models.oj_username import get_oj_username
 from app.models.problem import get_problem_by_problem_info, get_problem_by_problem_id, modify_problem_rating
@@ -29,6 +30,8 @@ def crawl_accept_problem(username, oj_id):
     all_accept_problem = oj_spider.get_user_info(oj_username)
     if not all_accept_problem:
         return
+
+    user_rating = get_rating_by_username(username)
 
     for problem_id in all_accept_problem:
         real_oj_id = oj_id
@@ -64,27 +67,28 @@ def crawl_accept_problem(username, oj_id):
 
         if problem_id not in already_accept_problem.get(real_oj_id, set()):
             problem = get_problem_by_problem_info(real_oj_id, problem_id)
-            create_accept_problem(username, problem.id, 0)
-            task = get_task('crawl_problem_rating', {
-                'problem_id': problem.id
-            })
-            if not task or task.status == 2:
-                create_task('crawl_problem_rating', {
-                    'problem_id': problem.id
-                })
+            if problem.rating == 0:
+                _crawl_problem_rating(problem.id)
+                problem = get_problem_by_problem_info(real_oj_id, problem_id)
+            add_rating = calculate_user_rating(user_rating, problem.rating)
+            create_accept_problem(username, problem.id, add_rating)
+            user_rating += add_rating
 
 
-def crawl_problem_rating(problem_id):
+def _crawl_problem_rating(problem_id):
     problem = get_problem_by_problem_id(problem_id)
     if problem.oj.status == 0:
         modify_problem_rating(problem_id, DEFAULT_PROBLEM_RATING)
-        modify_rating_by_problem_id(problem_id)
         return
     oj_name = problem.oj.name
     oj_spider = globals()[oj_name.title() + 'Spider']
     problem_pid = problem.problem_pid
     rating = oj_spider.get_problem_info(problem_pid)['rating']
     modify_problem_rating(problem_id, rating)
+
+
+def crawl_problem_rating(problem_id):
+    _crawl_problem_rating(problem_id)
     modify_rating_by_problem_id(problem_id)
 
 
