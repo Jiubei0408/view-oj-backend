@@ -21,15 +21,15 @@ def get_an_idle_task():
     return Task.query.filter_by(status=0).order_by(Task.id).first()
 
 
-def start_task(task_id):
-    task = Task.query.get(task_id)
+def start_task(task_name, kwargs):
+    task = get_task(task_name, kwargs)
     with db.auto_commit():
         task.status = 1
         task.start_time = datetime.datetime.now()
 
 
-def finish_task(task_id):
-    task = Task.query.get(task_id)
+def finish_task(task_name, kwargs):
+    task = get_task(task_name, kwargs)
     with db.auto_commit():
         task.status = 2
         task.finish_time = datetime.datetime.now()

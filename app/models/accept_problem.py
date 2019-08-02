@@ -148,6 +148,10 @@ def get_accept_problem_by_username_problem_id(username, problem_id):
     return AcceptProblem.query.filter_by(username=username, problem_id=problem_id).first()
 
 
+def get_accept_problem_by_problem_list(username, problem_list):
+    return AcceptProblem.query.filter(AcceptProblem.id.in_(problem_list), AcceptProblem.username == username).all()
+
+
 if __name__ == '__main__':
     from app import create_app
 
