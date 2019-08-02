@@ -1,0 +1,13 @@
+celery
+eventlet
+Flask
+Flask-Cors
+Flask-Login
+Flask-SQLAlchemy
+lxml
+parsel
+PyExecJS
+PyMySQL
+requests
+tenacity
+WTForms
