@@ -1,9 +1,9 @@
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 
 from app import login_manager
 from app.libs.error_code import AuthFailed
 from app.models.base import db
-from app.models.entity import User
+from app.models.entity import User, AcceptProblem, Problem, ProblemSet, ProblemRelationship
 
 
 def create_user(username, nickname):
@@ -43,6 +43,18 @@ def get_user_list():
         'permission': i.permission,
         'status': i.status
     } for i in User.query.order_by(desc(User.username)).all()]
+
+
+def get_user_list_by_problem_id(problem_set_id):
+    return [{
+        'username': i.username,
+        'nickname': i.nickname,
+        'permission': i.permission,
+        'status': i.status
+    } for i in
+        User.query.join(AcceptProblem).join(Problem).join(ProblemRelationship).filter(
+            ProblemRelationship.problem_set_id == problem_set_id).group_by(User.username).order_by(
+            desc(func.count(AcceptProblem.id))).all()]
 
 
 @login_manager.user_loader

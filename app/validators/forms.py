@@ -151,3 +151,7 @@ class RefreshAcceptProblemForm(NoAuthUsernameForm, OJIdForm):
 
 class RefreshProblemRatingForm(ProblemIdForm):
     pass
+
+
+class InquireProblemIdForm(OJIdForm):
+    problem_pid = StringField(validators=[DataRequired(message='Problem pid cannot be empty')])

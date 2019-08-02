@@ -144,6 +144,10 @@ def get_rating_rank_list():
     ).group_by(User.username).order_by(desc(func.sum(AcceptProblem.add_rating))).all()]
 
 
+def get_accept_problem_by_username_problem_id(username, problem_id):
+    return AcceptProblem.query.filter_by(username=username, problem_id=problem_id).first()
+
+
 if __name__ == '__main__':
     from app import create_app
 
