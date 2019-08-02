@@ -1,6 +1,3 @@
-import os
-import platform
-
 from celery import Celery
 
 from app import create_app
@@ -8,11 +5,6 @@ from app.models.oj import get_oj_list
 from app.models.task import get_task, create_task, start_task, finish_task
 from app.models.user import get_user_list
 from app.spiders.oj_spider import crawl_accept_problem, crawl_problem_rating
-
-# if platform.system() == 'Windows':
-#     # 解决windows运行worker错误
-#
-#     os.environ.setdefault('FORKED_BY_MULTIPROCESSING', '1')
 
 celery = Celery('tasks')
 celery.config_from_object('app.config.setting')
