@@ -71,7 +71,7 @@ def get_accept_problem_count_distributed_api():
 @api.route("/get_problem_id", methods=['POST'])
 def get_problem_id_api():
     form = InquireProblemIdForm().validate_for_api()
-    res = get_problem_by_problem_info(form.oj_id.data, form.problem_pid.data, auto_create=False)
+    res = get_problem_by_problem_info(form.oj_id.data, form.problem_pid.data)
     if res:
         res = res.id
     return jsonify({

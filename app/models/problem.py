@@ -12,13 +12,12 @@ def create_problem(oj_id, problem_pid, rating=0):
     return r
 
 
-def get_problem_by_problem_info(oj_id, problem_pid, auto_create=True):
+def get_problem_by_problem_info(oj_id, problem_pid):
     r = Problem.query.filter_by(oj_id=oj_id, problem_pid=problem_pid).first()
     if r:
         return r
     else:
-        if auto_create:
-            return create_problem(oj_id, problem_pid)
+        return create_problem(oj_id, problem_pid)
 
 
 def get_problem_by_problem_id(problem_id):
