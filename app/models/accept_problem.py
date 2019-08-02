@@ -3,10 +3,8 @@ import datetime
 from sqlalchemy import func, desc
 
 from app.config.setting import DEFAULT_USER_RATING
-from app.libs.service import calculate_user_rating
 from app.models.base import db
 from app.models.entity import AcceptProblem, Problem, User
-from app.models.problem import get_problem_by_problem_id
 
 
 def create_accept_problem(username, problem_id, add_rating):
@@ -18,6 +16,10 @@ def create_accept_problem(username, problem_id, add_rating):
             r.add_rating = add_rating
             r.create_time = datetime.datetime.now()
             db.session.add(r)
+
+
+def get_accept_problem_list_by_username(username):
+    return AcceptProblem.query.filter_by(username=username).all()
 
 
 def get_accept_problem_list_by_oj_id(username, oj_id):
@@ -89,38 +91,12 @@ def get_accept_problem_by_problem_id(problem_id):
     return AcceptProblem.query.filter_by(problem_id=problem_id).all()
 
 
-def modify_rating_by_problem_id(problem_id):
-    problem = get_problem_by_problem_id(problem_id)
-    r = get_accept_problem_by_problem_id(problem_id)
-    if r:
-        for i in r:
-            with db.auto_commit():
-                user_rating = get_rating_by_problem_id(i.username, problem_id)
-                i.add_rating = calculate_user_rating(user_rating, problem.rating)
-
-
 def delete_accept_problem_by_oj_id(username, oj_id):
     with db.auto_commit():
         AcceptProblem.query.filter(
             AcceptProblem.username == username,
             AcceptProblem.problem_id.in_(db.session.query(Problem.id).filter_by(oj_id=oj_id).subquery())
         ).delete(synchronize_session='fetch')
-
-
-def get_rating_by_problem_id(username, problem_id):
-    problem = AcceptProblem.query.filter_by(problem_id=problem_id, username=username).first()
-    if problem:
-        rating = db.session.query(func.sum(AcceptProblem.add_rating)).filter(
-            AcceptProblem.username == username,
-            AcceptProblem.id < problem.id
-        ).first()[0]
-        if rating:
-            rating = int(rating) + DEFAULT_USER_RATING
-        else:
-            rating = DEFAULT_USER_RATING
-    else:
-        rating = get_rating_by_username(username)
-    return rating
 
 
 def get_rating_by_username(username):
@@ -150,6 +126,12 @@ def get_accept_problem_by_username_problem_id(username, problem_id):
 
 def get_accept_problem_by_problem_list(username, problem_list):
     return AcceptProblem.query.filter(AcceptProblem.id.in_(problem_list), AcceptProblem.username == username).all()
+
+
+def modify_accept_problem_add_rating(accept_problem_id, add_rating):
+    r = AcceptProblem.query.get(accept_problem_id)
+    with db.auto_commit():
+        r.add_rating = add_rating
 
 
 if __name__ == '__main__':

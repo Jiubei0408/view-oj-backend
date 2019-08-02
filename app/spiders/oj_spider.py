@@ -1,5 +1,5 @@
 from app.config.setting import DEFAULT_PROBLEM_RATING
-from app.libs.service import calculate_user_rating
+from app.libs.service import calculate_user_add_rating
 from app.models.accept_problem import create_accept_problem, get_accept_problem_list_by_oj_id, get_rating_by_username
 from app.models.oj import get_oj_by_oj_id, get_oj_by_oj_name, get_oj_list
 from app.models.oj_username import get_oj_username
@@ -69,7 +69,7 @@ def crawl_accept_problem(username, oj_id):
             if problem.rating == 0:
                 crawl_problem_rating(problem.id)
                 problem = get_problem_by_problem_info(real_oj_id, problem_id)
-            add_rating = calculate_user_rating(user_rating, problem.rating)
+            add_rating = calculate_user_add_rating(user_rating, problem.rating)
             create_accept_problem(username, problem.id, add_rating)
             user_rating += add_rating
 

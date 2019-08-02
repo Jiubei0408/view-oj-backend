@@ -1,6 +1,7 @@
 from celery import Celery
 
 from app import create_app
+from app.libs.service import calculate_user_rating
 from app.models.oj import get_oj_list
 from app.models.task import get_task, create_task, start_task, finish_task
 from app.models.user import get_user_list
@@ -63,4 +64,19 @@ def task_crawl_problem_rating(problem_id):
             pass
         finish_task('crawl_problem_rating', {
             'problem_id': problem_id,
+        })
+
+
+@celery.task
+def task_calculate_user_rating(username):
+    with create_app().app_context():
+        start_task('calculate_user_rating', {
+            'username': username,
+        })
+        try:
+            calculate_user_rating(username)
+        except:
+            pass
+        finish_task('calculate_user_rating', {
+            'username': username,
         })
