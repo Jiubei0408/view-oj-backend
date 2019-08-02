@@ -42,9 +42,9 @@ def get_problem_set_by_problem_id(problem_set_id):
     return ProblemSet.query.get(problem_set_id)
 
 
-def get_problem_set_list(page, page_size):
+def get_problem_set_list():
     return [{
         'id': i.id,
         'name': i.name,
         'create_time': i.create_time
-    } for i in ProblemSet.query.order_by(desc(ProblemSet.id)).offset((page - 1) * page_size).limit(page_size).all()]
+    } for i in ProblemSet.query.order_by(desc(ProblemSet.id)).all()]
