@@ -37,7 +37,7 @@ class LuoguSpider(BaseSpider):
 
     @staticmethod
     def get_problem_info(problem_id):
-        url = 'https://www.luogu.org/problem/{}'.format(problem_id)
+        url = 'https://www.luogu.org/problem/P{}'.format(problem_id)
         res = LuoguHttp().get(url=url)
 
         try:
@@ -71,4 +71,4 @@ class LuoguSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(LuoguSpider.get_problem_info('P1002'))
+    print(LuoguSpider.get_problem_info('1002'))

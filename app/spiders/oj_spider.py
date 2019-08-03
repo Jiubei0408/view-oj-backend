@@ -30,8 +30,6 @@ def crawl_accept_problem(username, oj_id):
     if not all_accept_problem:
         return
 
-    user_rating = get_rating_by_username(username)
-
     for problem_id in all_accept_problem:
         real_oj_id = oj_id
         if oj_name == 'vjudge':
@@ -69,9 +67,7 @@ def crawl_accept_problem(username, oj_id):
             if problem.rating == 0:
                 crawl_problem_rating(problem.id)
                 problem = get_problem_by_problem_info(real_oj_id, problem_id)
-            add_rating = calculate_user_add_rating(user_rating, problem.rating)
-            create_accept_problem(username, problem.id, add_rating)
-            user_rating += add_rating
+            create_accept_problem(username, problem.id, 0)
 
 
 def crawl_problem_rating(problem_id):
