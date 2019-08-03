@@ -28,3 +28,11 @@ def modify_problem_rating(problem_id, rating):
     r = get_problem_by_problem_id(problem_id)
     with db.auto_commit():
         r.rating = rating
+
+
+def get_problem_by_oj_id(oj_id):
+    r = Problem.query.filter_by(oj_id=oj_id).all()
+    if r:
+        return r
+    else:
+        return list()

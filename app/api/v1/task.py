@@ -3,10 +3,11 @@ from flask_login import login_required, current_user
 
 from app.libs.error_code import Success, Forbidden
 from app.libs.red_print import RedPrint
+from app.models.problem import get_problem_by_oj_id
 from app.models.task import create_task, get_task, get_task_count
-from app.validators.forms import RefreshAcceptProblemForm, RefreshProblemRatingForm, NoAuthUsernameForm
+from app.validators.forms import RefreshAcceptProblemForm, RefreshProblemRatingForm, NoAuthUsernameForm, OJIdForm
 from tasks import task_crawl_all_accept_problem, task_crawl_accept_problem, task_crawl_problem_rating, \
-    task_calculate_user_rating
+    task_calculate_user_rating, task_refresh_oj_problem_rating
 
 api = RedPrint('task')
 
@@ -75,4 +76,12 @@ def refresh_user_rating_api():
         'username': form.username.data,
     })
     task_calculate_user_rating.delay(form.username.data)
+    return Success('Submit refresh request successfully')
+
+
+@api.route("/refresh_oj_problem_rating", methods=['POST'])
+@login_required
+def refresh_oj_problem_rating_api():
+    form = OJIdForm().validate_for_api()
+    task_refresh_oj_problem_rating.delay(form.oj_id.data)
     return Success('Submit refresh request successfully')

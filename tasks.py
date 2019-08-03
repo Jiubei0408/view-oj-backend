@@ -3,6 +3,7 @@ from celery import Celery
 from app import create_app
 from app.libs.service import calculate_user_rating
 from app.models.oj import get_oj_list
+from app.models.problem import get_problem_by_oj_id
 from app.models.task import get_task, create_task, start_task, finish_task
 from app.models.user import get_user_list
 from app.spiders.oj_spider import crawl_accept_problem, crawl_problem_rating
@@ -80,3 +81,17 @@ def task_calculate_user_rating(username):
         finish_task('calculate_user_rating', {
             'username': username,
         })
+
+
+@celery.task
+def task_refresh_oj_problem_rating(oj_id):
+    with create_app().app_context():
+        for i in get_problem_by_oj_id(oj_id):
+            task = get_task('crawl_problem_rating', {
+                'problem_id': i.id,
+            })
+            if not task or task.status == 2:
+                create_task('crawl_problem_rating', {
+                    'problem_id': i.id,
+                })
+                task_crawl_problem_rating.delay(i.id)
