@@ -11,3 +11,4 @@ PyMySQL
 requests
 tenacity
 WTForms
+gunicorn
