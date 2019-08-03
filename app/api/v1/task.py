@@ -3,7 +3,6 @@ from flask_login import login_required, current_user
 
 from app.libs.error_code import Success, Forbidden
 from app.libs.red_print import RedPrint
-from app.models.problem import get_problem_by_oj_id
 from app.models.task import create_task, get_task, get_task_count
 from app.validators.forms import RefreshAcceptProblemForm, RefreshProblemRatingForm, NoAuthUsernameForm, OJIdForm
 from tasks import task_crawl_all_accept_problem, task_crawl_accept_problem, task_crawl_problem_rating, \
