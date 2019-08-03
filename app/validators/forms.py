@@ -127,10 +127,13 @@ class UserInfoForm(UsernameForm):
                 raise Forbidden()
 
 
-class ProblemSetInfoForm(Form):
+class ProblemSetNameForm(Form):
     problem_set_name = StringField(validators=[DataRequired(message='Problem set name cannot be empty')])
+
+
+class ProblemSetInfoForm(ProblemSetNameForm):
     problem_id_list = FieldList(IntegerField(validators=[DataRequired(message='Problem id cannot be empty')]),
-                                min_entries=2)
+                                min_entries=1)
 
 
 class ModifyProblemSetForm(ProblemSetIdForm, ProblemSetInfoForm):

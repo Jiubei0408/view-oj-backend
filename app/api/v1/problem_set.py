@@ -3,11 +3,11 @@ from flask_login import login_required
 
 from app.libs.error_code import Success
 from app.libs.red_print import RedPrint
-from app.models.accept_problem import get_accept_problem_by_username_problem_id, get_accept_problem_by_problem_list
+from app.models.accept_problem import get_accept_problem_by_problem_list
 from app.models.problem_set import create_problem_set, modify_problem_set, delete_problem_set, get_problem_set_list, \
     get_problem_set_by_problem_id
-from app.models.user import get_user_list, get_user_list_by_problem_id
-from app.validators.forms import ProblemSetInfoForm, ModifyProblemSetForm, ProblemSetIdForm, PageForm
+from app.models.user import get_user_list
+from app.validators.forms import ModifyProblemSetForm, ProblemSetIdForm, ProblemSetInfoForm
 
 api = RedPrint('problem_set')
 
@@ -24,7 +24,7 @@ def create_problem_set_api():
 @login_required
 def modify_problem_set_api():
     form = ModifyProblemSetForm().validate_for_api()
-    modify_problem_set(form.problem_set_id.data, form.problem_set_name.data, form.problem_id_list.data)
+    modify_problem_set(form.problem_set_id.data, form.problem_set_name.data)
     return Success('Modify problem set successful')
 
 

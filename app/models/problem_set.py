@@ -18,15 +18,10 @@ def create_problem_set(problem_set_name, problem_list):
         create_problem_relationship(r.id, i)
 
 
-def modify_problem_set(problem_set_id, problem_set_name, problem_list):
+def modify_problem_set(problem_set_id, problem_set_name):
     r = get_problem_set_by_problem_id(problem_set_id)
     with db.auto_commit():
         r.name = problem_set_name
-
-    delete_problem_relationship_by_problem_set_id(problem_set_id)
-
-    for i in problem_list:
-        create_problem_relationship(r.id, i)
 
 
 def delete_problem_set(problem_set_id):
