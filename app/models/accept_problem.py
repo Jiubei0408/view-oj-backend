@@ -125,7 +125,8 @@ def get_accept_problem_by_username_problem_id(username, problem_id):
 
 
 def get_accept_problem_by_problem_list(username, problem_list):
-    return AcceptProblem.query.filter(AcceptProblem.id.in_(problem_list), AcceptProblem.username == username).all()
+    return AcceptProblem.query.join(Problem).filter(Problem.id.in_(problem_list),
+                                                    AcceptProblem.username == username).all()
 
 
 def modify_accept_problem_add_rating(accept_problem_id, add_rating):

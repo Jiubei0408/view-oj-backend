@@ -57,14 +57,16 @@ def get_problem_set_detail_api():
     } for i in get_problem_set_by_problem_id(form.problem_set_id.data).problem]
     res = list()
     for user in user_list:
-        res.append({
-            'username': user['username'],
-            'nickname': user['nickname'],
-            'data': [{
-                'problem_id': i.problem_id,
-                'create_time': i.create_time
-            } for i in get_accept_problem_by_problem_list(user['username'], [i['problem_id'] for i in problem_list])]
-        })
+        if user['status']:
+            res.append({
+                'username': user['username'],
+                'nickname': user['nickname'],
+                'data': [{
+                    'problem_id': i.problem_id,
+                    'create_time': i.create_time
+                } for i in
+                    get_accept_problem_by_problem_list(user['username'], [i['problem_id'] for i in problem_list])]
+            })
     return jsonify({
         'code': 0,
         'data': {
