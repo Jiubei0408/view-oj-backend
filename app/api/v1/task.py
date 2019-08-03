@@ -3,11 +3,8 @@ from flask_login import login_required, current_user
 
 from app.libs.error_code import Success, Forbidden
 from app.libs.red_print import RedPrint
-from app.models.problem_set import get_problem_set_by_problem_id
 from app.models.task import create_task, get_task, get_task_count
-from app.models.user import get_user_list
-from app.validators.forms import RefreshAcceptProblemForm, RefreshProblemRatingForm, ProblemSetIdForm, \
-    NoAuthUsernameForm
+from app.validators.forms import RefreshAcceptProblemForm, RefreshProblemRatingForm, NoAuthUsernameForm
 from tasks import task_crawl_all_accept_problem, task_crawl_accept_problem, task_crawl_problem_rating, \
     task_calculate_user_rating
 
@@ -63,25 +60,6 @@ def refresh_problem_rating_api():
         'problem_id': form.problem_id.data,
     })
     task_crawl_problem_rating.delay(form.problem_id.data)
-    return Success('Submit refresh request successfully')
-
-
-@api.route("/refresh_problem_set", methods=['POST'])
-def refresh_problem_set_api():
-    form = ProblemSetIdForm().validate_for_api()
-    problem_set = get_problem_set_by_problem_id(form.problem_set_id.data)
-    for problem in problem_set.problem:
-        for user in get_user_list():
-            task = get_task('crawl_accept_problem', {
-                'username': user['username'],
-                'oj_id': problem.problem.oj_id
-            })
-            if not task or task.status == 2:
-                create_task('crawl_accept_problem', {
-                    'username': user['username'],
-                    'oj_id': problem.problem.oj_id
-                })
-                task_crawl_accept_problem.delay(user['username'], problem.problem.oj_id)
     return Success('Submit refresh request successfully')
 
 
