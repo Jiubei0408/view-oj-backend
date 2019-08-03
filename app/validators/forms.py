@@ -136,7 +136,7 @@ class ProblemSetInfoForm(ProblemSetNameForm):
                                 min_entries=1)
 
 
-class ModifyProblemSetForm(ProblemSetIdForm, ProblemSetInfoForm):
+class ModifyProblemSetForm(ProblemSetIdForm, ProblemSetNameForm):
     pass
 
 
