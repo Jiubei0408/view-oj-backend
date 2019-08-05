@@ -124,6 +124,7 @@ class CreateUserForm(Form):
 
 class UserInfoForm(UsernameForm):
     nickname = StringField(validators=[DataRequired(message='Nickname cannot be empty')])
+    group = StringField()
     permission = IntegerField()
     status = IntegerField()
 

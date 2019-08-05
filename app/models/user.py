@@ -28,10 +28,11 @@ def modify_password(username, password):
         user.password = password
 
 
-def modify_user(user_id, nickname, permission, status):
+def modify_user(user_id, nickname, group, permission, status):
     user = get_user_by_username(user_id)
     with db.auto_commit():
         user.nickname = nickname
+        user.group = group
         user.permission = permission
         user.status = status
 
