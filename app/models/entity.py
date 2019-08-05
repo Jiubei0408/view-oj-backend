@@ -1,3 +1,5 @@
+import re
+
 from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
@@ -29,6 +31,19 @@ class Problem(Base):
     problem_pid = Column(String(100), nullable=False)
     rating = Column(Integer, nullable=False)
 
+    @property
+    def url(self):
+        try:
+            if self.oj.name == 'codeforces':
+                p = re.match('^([0-9]+)([a-zA-Z]+[0-9]*)$', self.problem_pid)
+                problem_id_1 = p.group(1)
+                problem_id_2 = p.group(2)
+                return self.oj.url.format(problem_id_1, problem_id_2)
+
+            return self.oj.url.format(self.problem_pid)
+        except:
+            return None
+
 
 class AcceptProblem(Base):
     __tablename__ = 'accept_problem'
@@ -46,6 +61,7 @@ class OJ(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), unique=True)
+    url = Column(String(1000))
     status = Column(Integer, nullable=False)
 
 

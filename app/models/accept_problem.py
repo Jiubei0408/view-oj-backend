@@ -41,6 +41,7 @@ def get_accept_problem_list_by_date(username, start_date, end_date, page, page_s
             'oj_name': i.problem.oj.name,
             'problem_id': i.problem_id,
             'problem_pid': i.problem.problem_pid,
+            'problem_url': i.problem.url,
             'rating': i.problem.rating,
             'add_rating': i.add_rating,
             'create_time': i.create_time
