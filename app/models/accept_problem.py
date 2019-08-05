@@ -19,7 +19,7 @@ def create_accept_problem(username, problem_id, add_rating):
 
 
 def get_accept_problem_list_by_username(username):
-    return AcceptProblem.query.filter_by(username=username).order_by(asc(AcceptProblem.id)).all()
+    return AcceptProblem.query.filter_by(username=username).order_by(asc(AcceptProblem.create_time)).all()
 
 
 def get_accept_problem_list_by_oj_id(username, oj_id):
