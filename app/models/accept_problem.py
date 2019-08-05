@@ -16,6 +16,7 @@ def create_accept_problem(username, problem_id, add_rating):
             r.add_rating = add_rating
             r.create_time = datetime.datetime.now()
             db.session.add(r)
+        return r
 
 
 def get_accept_problem_list_by_username(username):

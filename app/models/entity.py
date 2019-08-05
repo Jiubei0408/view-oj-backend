@@ -13,7 +13,7 @@ class User(UserMixin, Base):
     username = Column(String(100), primary_key=True)
     nickname = Column(String(100), nullable=False)
     password = Column(String(100), nullable=False)
-    group = Column(String(100), nullable=False)
+    group = Column(String(100))
     permission = Column(Integer, nullable=False)
     status = Column(Integer, nullable=False)
     oj_username = relationship("app.models.entity.OJUsername", back_populates="user")
