@@ -25,8 +25,9 @@ source venv/bin/activate
 # 安装依赖
 pip install requirements.txt
 ```
+# 运行
 
-# 直接运行(仅用于测试)
+## 直接运行(仅用于测试)
 ```bash
 # 运行web服务器（测试环境）
 python app.py
@@ -38,7 +39,7 @@ celery -A tasks worker -l info -c 8 --pool=eventlet
 celery -A tasks beat -l info
 ```
 
-# supervisor守护运行(推荐)
+## supervisor守护运行(推荐)
 1.安装supervisor
 
 2.修改view-oj.ini文件中的目录
