@@ -1,5 +1,5 @@
 # view-oj-backend
-此项目是view-oj的后端api接口项目
+此项目是view-oj的后端项目(ZUCC-ACM-LAB)
 
 前端项目地址: ...
 
