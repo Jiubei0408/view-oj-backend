@@ -1,7 +1,7 @@
 # view-oj-backend
 此项目是view-oj的后端项目(ZUCC-ACM-LAB)
 
-前端项目地址: ...
+前端项目地址: https://github.com/KeadinZhou/view-oj-web
 
 接口文档: https://www.showdoc.cc/417895562132382
 
