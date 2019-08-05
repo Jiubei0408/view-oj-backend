@@ -117,8 +117,7 @@ def get_rating_rank_list():
         'rating': DEFAULT_USER_RATING + int(i[2])
     } for i in db.session.query(
         User.username, User.nickname, func.sum(AcceptProblem.add_rating)).filter(
-        User.username == AcceptProblem.username,
-        User.status == 1
+        User.username == AcceptProblem.username
     ).group_by(User.username).order_by(desc(func.sum(AcceptProblem.add_rating))).all()]
 
 
