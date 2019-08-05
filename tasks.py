@@ -21,7 +21,8 @@ def setup_periodic_tasks(sender, **kwargs):
 @celery.task
 def task_crawl_all_accept_problem():
     with create_app().app_context():
-        for user in get_user_list():
+        user_list = get_user_list()
+        for user in user_list:
             for oj in get_oj_list():
                 if oj['status'] and user['status']:
                     task = get_task('crawl_accept_problem', {
@@ -34,6 +35,15 @@ def task_crawl_all_accept_problem():
                             'oj_id': oj['id']
                         })
                         task_crawl_accept_problem.delay(user['username'], oj['id'])
+        for user in user_list:
+            task = get_task('calculate_user_rating', {
+                'username': user['username']
+            })
+            if not task or task.status == 2:
+                create_task('calculate_user_rating', {
+                    'username': user['username']
+                })
+                task_calculate_user_rating.delay(user['username'])
 
 
 @celery.task
