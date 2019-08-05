@@ -114,5 +114,5 @@ def modify_user_info_api():
     if not current_user.permission:
         raise Forbidden('Only administrators can operate')
     form = UserInfoForm().validate_for_api()
-    modify_user(form.username.data, form.nickname.data, form.permission.data, form.status.data)
+    modify_user(form.username.data, form.nickname.data, form.group.data, form.permission.data, form.status.data)
     return Success('Modify successful')
