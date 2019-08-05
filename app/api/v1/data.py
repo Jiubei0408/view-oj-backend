@@ -19,6 +19,7 @@ def get_all_accept_problem_count_api():
             res.append({
                 'username': user['username'],
                 'nickname': user['nickname'],
+                'group': user['group'],
                 'accept_problem_count': get_accept_problem_count_by_date(user['username'], form.start_date.data,
                                                                          form.end_date.data)
             })

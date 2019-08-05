@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired, ValidationError
 
 from app.libs.error_code import Forbidden
 from app.models.oj import get_oj_by_oj_id
+from app.models.oj_username import get_oj_username
 from app.models.problem import get_problem_by_problem_id
 from app.models.problem_set import get_problem_set_by_problem_id
 from app.models.user import check_password, get_user_by_username
@@ -80,6 +81,11 @@ class LoginForm(Form):
 class OJNameForm(UsernameForm, OJIdForm):
     oj_username = StringField()
 
+    def validate_oj_username(self, value):
+        if not current_user.permission:
+            if get_oj_username(self.username.data, self.oj_id.data):
+                raise Forbidden()
+
 
 class PageForm(Form):
     page = IntegerField(validators=[DataRequired(message='Page cannot be empty')])
@@ -120,11 +126,6 @@ class UserInfoForm(UsernameForm):
     nickname = StringField(validators=[DataRequired(message='Nickname cannot be empty')])
     permission = IntegerField()
     status = IntegerField()
-
-    def validate_permission(self, value):
-        if not current_user.permission:
-            if self.permission.data != 0:
-                raise Forbidden()
 
 
 class ProblemSetNameForm(Form):

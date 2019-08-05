@@ -111,6 +111,8 @@ def get_user_list_api():
 @api.route("/modify_user_info", methods=['POST'])
 @login_required
 def modify_user_info_api():
+    if not current_user.permission:
+        raise Forbidden('Only administrators can operate')
     form = UserInfoForm().validate_for_api()
     modify_user(form.username.data, form.nickname.data, form.permission.data, form.status.data)
     return Success('Modify successful')

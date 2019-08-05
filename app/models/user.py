@@ -40,9 +40,10 @@ def get_user_list():
     return [{
         'username': i.username,
         'nickname': i.nickname,
+        'group': i.group,
         'permission': i.permission,
         'status': i.status
-    } for i in User.query.order_by(desc(User.username)).all()]
+    } for i in User.query.all()]
 
 
 def get_user_list_by_problem_id(problem_set_id):
