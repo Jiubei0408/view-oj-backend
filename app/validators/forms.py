@@ -28,7 +28,6 @@ class DateForm(Form):
             self.end_date.data = datetime.datetime.strptime(self.end_date.data, '%Y-%m-%d').date()
         else:
             self.end_date.data = datetime.date.today()
-        self.end_date.data += datetime.timedelta(days=1)
 
 
 class UsernameForm(Form):

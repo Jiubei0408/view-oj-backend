@@ -34,8 +34,8 @@ def get_accept_problem_list_by_date(username, start_date, end_date, page, page_s
     return {
         'count': AcceptProblem.query.filter(
             AcceptProblem.username == username,
-            AcceptProblem.create_time >= start_date,
-            AcceptProblem.create_time <= end_date
+            cast(AcceptProblem.create_time, Date) >= start_date,
+            cast(AcceptProblem.create_time, Date) <= end_date
         ).count(),
         'data': [{
             'oj_id': i.problem.oj_id,
@@ -48,8 +48,8 @@ def get_accept_problem_list_by_date(username, start_date, end_date, page, page_s
             'create_time': i.create_time
         } for i in AcceptProblem.query.filter(
             AcceptProblem.username == username,
-            AcceptProblem.create_time >= start_date,
-            AcceptProblem.create_time < end_date
+            cast(AcceptProblem.create_time, Date) >= start_date,
+            cast(AcceptProblem.create_time, Date) < end_date
         ).order_by(desc(AcceptProblem.create_time)).offset((page - 1) * page_size).limit(page_size).all()]
     }
 
@@ -57,25 +57,20 @@ def get_accept_problem_list_by_date(username, start_date, end_date, page, page_s
 def get_accept_problem_count_by_date(username, start_date, end_date):
     return AcceptProblem.query.filter(
         AcceptProblem.username == username,
-        AcceptProblem.create_time >= start_date,
-        AcceptProblem.create_time <= end_date
+        cast(AcceptProblem.create_time, Date) >= start_date,
+        cast(AcceptProblem.create_time, Date) <= end_date
     ).count()
 
 
 def get_accept_problem_date_distributed(username, start_date, end_date):
-    r = list()
-    now_date = start_date
-    while now_date != end_date:
-        r.append({
-            'date': now_date,
-            'count': AcceptProblem.query.filter(
-                AcceptProblem.username == username,
-                AcceptProblem.create_time >= now_date,
-                AcceptProblem.create_time < now_date + datetime.timedelta(days=1)
-            ).count()
-        })
-        now_date = now_date + datetime.timedelta(days=1)
-    return r
+    return [{
+        'date': i[0],
+        'count': int(i[1])
+    } for i in db.session.query(cast(AcceptProblem.create_time, Date), func.count(AcceptProblem.id)).filter(
+        AcceptProblem.username == username,
+        cast(AcceptProblem.create_time, Date) >= start_date,
+        cast(AcceptProblem.create_time, Date) <= end_date
+    ).group_by(cast(AcceptProblem.create_time, Date)).all()]
 
 
 def get_accept_problem_oj_distributed(username):
