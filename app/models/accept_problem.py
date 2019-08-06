@@ -49,7 +49,7 @@ def get_accept_problem_list_by_date(username, start_date, end_date, page, page_s
         } for i in AcceptProblem.query.filter(
             AcceptProblem.username == username,
             cast(AcceptProblem.create_time, Date) >= start_date,
-            cast(AcceptProblem.create_time, Date) < end_date
+            cast(AcceptProblem.create_time, Date) <= end_date
         ).order_by(desc(AcceptProblem.create_time)).limit(page_size).offset((page - 1) * page_size).all()]
     }
 
