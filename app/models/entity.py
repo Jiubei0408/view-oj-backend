@@ -39,7 +39,10 @@ class Problem(Base):
                 p = re.match('^([0-9]+)([a-zA-Z]+[0-9]*)$', self.problem_pid)
                 problem_id_1 = p.group(1)
                 problem_id_2 = p.group(2)
-                return self.oj.url.format(problem_id_1, problem_id_2)
+                if int(problem_id_1) < 100000:
+                    return "https://codeforces.com/problemset/problem/{}/{}".format(problem_id_1, problem_id_2)
+                else:
+                    return "https://codeforces.com/gym/{}/problem/{}".format(problem_id_1, problem_id_2)
 
             return self.oj.url.format(self.problem_pid)
         except:
