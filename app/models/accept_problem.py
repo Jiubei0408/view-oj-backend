@@ -63,7 +63,7 @@ def get_accept_problem_count_by_date(username, start_date, end_date):
 
 
 def get_accept_problem_date_distributed(username, start_date, end_date):
-    return [{
+    r = [{
         'date': i[0],
         'count': int(i[1])
     } for i in db.session.query(cast(AcceptProblem.create_time, Date), func.count(AcceptProblem.id)).filter(
@@ -71,6 +71,15 @@ def get_accept_problem_date_distributed(username, start_date, end_date):
         cast(AcceptProblem.create_time, Date) >= start_date,
         cast(AcceptProblem.create_time, Date) <= end_date
     ).group_by(cast(AcceptProblem.create_time, Date)).all()]
+    rr = dict()
+    for i in r:
+        rr[i['date'].strftime('%Y-%m-%d')] = i['count']
+
+    while start_date != end_date:
+        if not rr.get(start_date.strftime('%Y-%m-%d')):
+            rr[start_date.strftime('%Y-%m-%d')] = 0
+        start_date = start_date + datetime.timedelta(days=1)
+    return rr
 
 
 def get_accept_problem_oj_distributed(username):
