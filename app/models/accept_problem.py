@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import func, desc, asc
+from sqlalchemy import func, desc, asc, cast, Date
 
 from app.config.setting import DEFAULT_USER_RATING
 from app.models.base import db
@@ -136,11 +136,19 @@ def modify_accept_problem_add_rating(accept_problem_id, add_rating):
         r.add_rating = add_rating
 
 
+def get_rating_trend(username):
+    return [{
+        'date': i[0],
+        'add_rating': int(i[1])
+    } for i in db.session.query(cast(AcceptProblem.create_time, Date), func.sum(AcceptProblem.add_rating)).filter_by(
+        username=username).group_by(cast(AcceptProblem.create_time, Date)).all()]
+
+
 if __name__ == '__main__':
     from app import create_app
 
     with create_app().app_context():
         s = datetime.date.today()
         e = datetime.date.today() + datetime.timedelta(days=1)
-        r = get_rating_rank_list()
+        r = get_rating_trend('31702411')
     print(r)

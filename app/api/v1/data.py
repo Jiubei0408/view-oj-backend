@@ -1,7 +1,7 @@
 from flask import jsonify
 from app.libs.red_print import RedPrint
 from app.models.accept_problem import get_accept_problem_list_by_date, get_accept_problem_count_by_date, \
-    get_accept_problem_oj_distributed, get_accept_problem_date_distributed, get_rating_rank_list
+    get_accept_problem_oj_distributed, get_accept_problem_date_distributed, get_rating_rank_list, get_rating_trend
 from app.models.oj import get_oj_list
 from app.models.problem import get_problem_by_problem_info
 from app.models.user import get_user_list
@@ -84,6 +84,16 @@ def get_problem_id_api():
 @api.route("/get_oj_list", methods=['POST'])
 def get_oj_list_api():
     res = get_oj_list()
+    return jsonify({
+        'code': 0,
+        'data': res
+    })
+
+
+@api.route("/get_rating_trend", methods=['POST'])
+def get_rating_trend_api():
+    form = NoAuthUsernameForm().validate_for_api()
+    res = get_rating_trend(form.username.data)
     return jsonify({
         'code': 0,
         'data': res
