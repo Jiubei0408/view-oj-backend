@@ -36,14 +36,15 @@ def task_crawl_all_accept_problem():
                         })
                         task_crawl_accept_problem.delay(user['username'], oj['id'])
         for user in user_list:
-            task = get_task('calculate_user_rating', {
-                'username': user['username']
-            })
-            if not task or task.status == 2:
-                create_task('calculate_user_rating', {
+            if user['status']:
+                task = get_task('calculate_user_rating', {
                     'username': user['username']
                 })
-                task_calculate_user_rating.delay(user['username'])
+                if not task or task.status == 2:
+                    create_task('calculate_user_rating', {
+                        'username': user['username']
+                    })
+                    task_calculate_user_rating.delay(user['username'])
 
 
 @celery.task
