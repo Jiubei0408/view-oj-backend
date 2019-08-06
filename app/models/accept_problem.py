@@ -79,11 +79,12 @@ def get_accept_problem_date_distributed(username, start_date, end_date):
         if not rr.get(start_date.strftime('%Y-%m-%d')):
             rr[start_date.strftime('%Y-%m-%d')] = 0
         start_date = start_date + datetime.timedelta(days=1)
+    sorted(rr.keys())
     rrr = list()
-    for i, j in rr.items():
+    for i in sorted(rr.keys()):
         rrr.append({
             'date': i,
-            'count': j
+            'count': rr[i]
         })
     return rrr
 
