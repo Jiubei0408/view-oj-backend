@@ -1,6 +1,5 @@
 from app.config.setting import DEFAULT_PROBLEM_RATING
-from app.libs.service import calculate_user_add_rating
-from app.models.accept_problem import create_accept_problem, get_accept_problem_list_by_oj_id, get_rating_by_username
+from app.models.accept_problem import create_accept_problem, get_accept_problem_list_by_oj_id
 from app.models.oj import get_oj_by_oj_id, get_oj_by_oj_name, get_oj_list
 from app.models.oj_username import get_oj_username
 from app.models.problem import get_problem_by_problem_info, get_problem_by_problem_id, modify_problem_rating
@@ -13,6 +12,7 @@ from app.spiders.poj_spider import PojSpider
 from app.spiders.vjudge_spider import VjudgeSpider
 from app.spiders.zoj_spider import ZojSpider
 from app.spiders.zucc_spider import ZuccSpider
+from app.spiders.hysbz_spider import HysbzSpider
 
 
 def crawl_accept_problem(username, oj_id):
@@ -86,5 +86,5 @@ if __name__ == '__main__':
     from app import create_app
 
     with create_app().app_context():
-        r = crawl_problem_rating(2)
+        r = crawl_problem_rating(5320)
     print(r)
