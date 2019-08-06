@@ -50,7 +50,7 @@ def get_accept_problem_list_by_date(username, start_date, end_date, page, page_s
             AcceptProblem.username == username,
             cast(AcceptProblem.create_time, Date) >= start_date,
             cast(AcceptProblem.create_time, Date) < end_date
-        ).order_by(desc(AcceptProblem.create_time)).offset((page - 1) * page_size).limit(page_size).all()]
+        ).order_by(desc(AcceptProblem.create_time)).limit(page_size).offset((page - 1) * page_size).all()]
     }
 
 
@@ -75,7 +75,7 @@ def get_accept_problem_date_distributed(username, start_date, end_date):
     for i in r:
         rr[i['date'].strftime('%Y-%m-%d')] = i['count']
 
-    while start_date != end_date:
+    while start_date != end_date + datetime.timedelta(days=1):
         if not rr.get(start_date.strftime('%Y-%m-%d')):
             rr[start_date.strftime('%Y-%m-%d')] = 0
         start_date = start_date + datetime.timedelta(days=1)
