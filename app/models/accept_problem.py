@@ -125,9 +125,10 @@ def get_rating_rank_list():
     return [{
         'username': i[0],
         'nickname': i[1],
-        'rating': DEFAULT_USER_RATING + int(i[2])
+        'status': i[2],
+        'rating': DEFAULT_USER_RATING + int(i[3])
     } for i in db.session.query(
-        User.username, User.nickname, func.sum(AcceptProblem.add_rating)).filter(
+        User.username, User.nickname, User.status, func.sum(AcceptProblem.add_rating)).filter(
         User.username == AcceptProblem.username
     ).group_by(User.username).order_by(desc(func.sum(AcceptProblem.add_rating))).all()]
 
