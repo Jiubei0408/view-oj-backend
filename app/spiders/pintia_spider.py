@@ -6,6 +6,7 @@ from app.spiders.base_spider import BaseSpider
 from app.spiders.cookies import Cookies
 from app.spiders.jigsaw import Jigsaw
 from app.spiders.spider_http import SpiderHttp
+from app.models.oj_username import modify_oj_username
 
 
 class PintiaHttp(SpiderHttp):
@@ -86,6 +87,7 @@ class PintiaSpider(BaseSpider):
                 if t >= 5:
                     raise Exception('验证失败')
         cookies = jigsaw.get_cookies()
+        jigsaw.close()
         cookies = Cookies.list_to_dict(cookies)
         headers = {
             'Cookie': Cookies.dict_to_str(cookies)
@@ -96,7 +98,7 @@ class PintiaSpider(BaseSpider):
 
 if __name__ == '__main__':
     from app import create_app
-    from app.models.oj_username import get_oj_username, modify_oj_username
+    from app.models.oj_username import get_oj_username
 
     create_app().app_context().push()
 
