@@ -13,6 +13,7 @@ from app.spiders.vjudge_spider import VjudgeSpider
 from app.spiders.zoj_spider import ZojSpider
 from app.spiders.zucc_spider import ZuccSpider
 from app.spiders.hysbz_spider import HysbzSpider
+from app.spiders.pintia_spider import PintiaSpider
 
 
 def crawl_accept_problem(username, oj_id):
@@ -85,6 +86,6 @@ def crawl_problem_rating(problem_id):
 if __name__ == '__main__':
     from app import create_app
 
-    with create_app().app_context():
-        r = crawl_problem_rating(5320)
-    print(r)
+    create_app().app_context().push()
+
+    crawl_accept_problem('31702411', 25)

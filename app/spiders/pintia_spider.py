@@ -1,5 +1,5 @@
 import json
-
+from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.spiders.base_spider import BaseSpider
 from app.spiders.cookies import Cookies
 from app.spiders.jigsaw import Jigsaw
@@ -50,7 +50,7 @@ class PintiaSpider(BaseSpider):
         return accept_problem_list
 
     def get_problem_info(self, problem_id):
-        pass
+        return {'rating': DEFAULT_PROBLEM_RATING}
 
     def check_cookies(self, email):
         url = 'https://pintia.cn/api/u/current'
