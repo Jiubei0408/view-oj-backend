@@ -37,8 +37,7 @@ class PintiaSpider(BaseSpider):
             cookies = self.get_cookies(username, password)
             modify_oj_username(oj_username.username, oj_username.oj_id, oj_username.oj_username,
                                oj_username.oj_password, json.dumps(cookies))
-
-        assert self.check_cookies(username)
+            assert self.check_cookies(username)
 
         accept_problem_list = []
 

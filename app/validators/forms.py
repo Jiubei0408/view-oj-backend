@@ -79,6 +79,7 @@ class LoginForm(Form):
 
 class OJNameForm(UsernameForm, OJIdForm):
     oj_username = StringField()
+    oj_password = StringField()
 
     def validate_oj_username(self, value):
         if not current_user.permission:

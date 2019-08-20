@@ -3,7 +3,7 @@ from app.models.entity import OJUsername
 from app.models.oj import get_oj_list
 
 
-def modify_oj_username(username, oj_id, oj_username, oj_password, oj_cookies):
+def modify_oj_username(username, oj_id, oj_username, oj_password, oj_cookies=None):
     r = OJUsername.query.filter_by(username=username, oj_id=oj_id).first()
     if not r and oj_username:
         create_oj_username(username, oj_id, oj_username, oj_password)
@@ -17,7 +17,7 @@ def modify_oj_username(username, oj_id, oj_username, oj_password, oj_cookies):
                 db.session.delete(r)
 
 
-def create_oj_username(username, oj_id, oj_username, oj_password=None):
+def create_oj_username(username, oj_id, oj_username, oj_password):
     with db.auto_commit():
         r = OJUsername()
         r.username = username

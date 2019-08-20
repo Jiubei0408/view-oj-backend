@@ -73,8 +73,7 @@ def get_oj_username_api():
 @login_required
 def modify_oj_username_api():
     form = OJNameForm().validate_for_api()
-    modify_oj_username(form.username.data, form.oj_id.data, form.oj_username.data)
-    delete_accept_problem_by_oj_id(form.username.data, form.oj_id.data)
+    modify_oj_username(form.username.data, form.oj_id.data, form.oj_username.data, form.oj_password.data)
     return Success('Modify successful')
 
 
