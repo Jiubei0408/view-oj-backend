@@ -75,6 +75,7 @@ class OJUsername(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(100), ForeignKey('user.username'))
     user = relationship("app.models.entity.User", back_populates="oj_username")
+    password = Column(String(100))
     oj_id = Column(Integer, ForeignKey('oj.id'))
     oj = relationship("app.models.entity.OJ")
     oj_username = Column(String(100), nullable=False)

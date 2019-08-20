@@ -26,17 +26,15 @@ class LuoguSpider(BaseSpider):
         res_json = json.loads(res.text)
         return res_json.get('more', dict()).get('uid')
 
-    @classmethod
-    def get_user_info(cls, username):
-        url = 'https://www.luogu.org/space/show?uid={}'.format(cls.get_user_id(username))
+    def get_user_info(self, username, password):
+        url = 'https://www.luogu.org/space/show?uid={}'.format(self.get_user_id(username))
         res = LuoguHttp().get(url=url)
         r = re.findall(
             '(?!<span style="display:none">\n)\[<a data-pjax href="/problemnew/show/.*">(.*)</a>\](?!\n</span>)',
             res.text)
         return r
 
-    @staticmethod
-    def get_problem_info(problem_id):
+    def get_problem_info(self, problem_id):
         url = 'https://www.luogu.org/problem/P{}'.format(problem_id)
         res = LuoguHttp().get(url=url)
 
@@ -71,4 +69,4 @@ class LuoguSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(LuoguSpider.get_problem_info('1002'))
+    print(LuoguSpider().get_problem_info('1002'))

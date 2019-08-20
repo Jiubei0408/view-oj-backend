@@ -10,15 +10,13 @@ from app.spiders.spider_http import SpiderHttp
 
 
 class ZojSpider(BaseSpider):
-    @staticmethod
-    def get_user_info(username):
+    def get_user_info(self, username, password):
         url = 'http://new.npuacm.info/api/crawlers/zoj/{}'.format(username)
         res = SpiderHttp().get(url=url)
         res_json = json.loads(res.text)
         return res_json.get('data', dict()).get('solvedList', list())
 
-    @staticmethod
-    def get_problem_info(problem_id):
+    def get_problem_info(self, problem_id):
         problem_id = int(problem_id) - 1000
         url = 'http://acm.zju.edu.cn/onlinejudge/showProblemStatus.do?problemId={}'.format(problem_id)
         res = SpiderHttp().get(url=url)
@@ -36,4 +34,4 @@ class ZojSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(ZojSpider.get_problem_info('1001'))
+    print(ZojSpider().get_problem_info('1001'))

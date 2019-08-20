@@ -25,9 +25,7 @@ def create_oj_username(username, oj_id, oj_username):
 
 
 def get_oj_username(username, oj_id):
-    r = OJUsername.query.filter_by(username=username, oj_id=oj_id).first()
-    if r:
-        return r.oj_username
+    return OJUsername.query.filter_by(username=username, oj_id=oj_id).first()
 
 
 def get_user_oj_username(username):

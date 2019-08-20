@@ -18,15 +18,13 @@ class HysbzHttp(SpiderHttp):
 
 
 class HysbzSpider(BaseSpider):
-    @staticmethod
-    def get_user_info(username):
+    def get_user_info(self, username, password):
         url = 'http://new.npuacm.info/api/crawlers/dashiye/{}'.format(username)
         res = SpiderHttp().get(url=url)
         res_json = json.loads(res.text)
         return res_json.get('data', dict()).get('solvedList', list())
 
-    @staticmethod
-    def get_problem_info(problem_id):
+    def get_problem_info(self, problem_id):
         url = 'https://www.lydsy.com/JudgeOnline/problem.php?id={}'.format(problem_id)
         headers = {
             'host': 'www.lydsy.com',
@@ -45,4 +43,4 @@ class HysbzSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(HysbzSpider.get_problem_info('1000'))
+    print(HysbzSpider().get_problem_info('1000'))

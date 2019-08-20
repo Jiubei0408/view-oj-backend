@@ -7,15 +7,13 @@ from app.spiders.spider_http import SpiderHttp
 
 
 class CodeforcesSpider(BaseSpider):
-    @staticmethod
-    def get_user_info(username):
+    def get_user_info(self, username, password):
         url = 'http://new.npuacm.info/api/crawlers/codeforces/{}'.format(username)
         res = SpiderHttp().get(url=url)
         res_json = json.loads(res.text)
         return res_json.get('data', dict()).get('solvedList', list())
 
-    @staticmethod
-    def get_problem_info(problem_id):
+    def get_problem_info(self, problem_id):
         p = re.match('^([0-9]+)([a-zA-Z]+[0-9]*)$', problem_id)
         problem_id_1 = p.group(1)
         problem_id_2 = p.group(2)
@@ -33,4 +31,4 @@ class CodeforcesSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(CodeforcesSpider.get_problem_info('1197F'))
+    print(CodeforcesSpider().get_problem_info('1197F'))

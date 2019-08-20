@@ -8,15 +8,13 @@ from app.spiders.spider_http import SpiderHttp
 
 
 class PojSpider(BaseSpider):
-    @staticmethod
-    def get_user_info(username):
+    def get_user_info(self, username, password):
         url = 'http://new.npuacm.info/api/crawlers/poj/{}'.format(username)
         res = SpiderHttp().get(url=url)
         res_json = json.loads(res.text)
         return res_json.get('data', dict()).get('solvedList', list())
 
-    @staticmethod
-    def get_problem_info(problem_id):
+    def get_problem_info(self, problem_id):
         url = 'http://poj.org/problem?id={}'.format(problem_id)
         res = SpiderHttp().get(url=url)
         try:
@@ -30,4 +28,4 @@ class PojSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(PojSpider.get_problem_info('1000'))
+    print(PojSpider().get_problem_info('1000'))

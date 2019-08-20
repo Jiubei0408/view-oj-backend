@@ -1,8 +1,6 @@
 class BaseSpider:
-    @staticmethod
-    def get_user_info(username):
+    def get_user_info(self, username, password):
         pass
 
-    @staticmethod
-    def get_problem_info(problem_id):
+    def get_problem_info(self, problem_id):
         pass
