@@ -26,7 +26,8 @@ class LuoguSpider(BaseSpider):
         res_json = json.loads(res.text)
         return res_json.get('more', dict()).get('uid')
 
-    def get_user_info(self, username, password):
+    def get_user_info(self, oj_username):
+        username = oj_username.oj_username
         url = 'https://www.luogu.org/space/show?uid={}'.format(self.get_user_id(username))
         res = LuoguHttp().get(url=url)
         r = re.findall(

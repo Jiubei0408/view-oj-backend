@@ -26,7 +26,7 @@ def crawl_accept_problem(username, oj_id):
     for i in get_oj_list():
         already_accept_problem[i['id']] = set(get_accept_problem_list_by_oj_id(username, i['id']))
 
-    all_accept_problem = oj_spider().get_user_info(oj_username.username, oj_username.password)
+    all_accept_problem = oj_spider().get_user_info(oj_username)
     if not all_accept_problem:
         return
 

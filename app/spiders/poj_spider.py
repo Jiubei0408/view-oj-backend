@@ -8,7 +8,8 @@ from app.spiders.spider_http import SpiderHttp
 
 
 class PojSpider(BaseSpider):
-    def get_user_info(self, username, password):
+    def get_user_info(self, oj_username):
+        username = oj_username.oj_username
         url = 'http://new.npuacm.info/api/crawlers/poj/{}'.format(username)
         res = SpiderHttp().get(url=url)
         res_json = json.loads(res.text)

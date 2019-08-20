@@ -1,4 +1,5 @@
-from app.config.setting import DEFAULT_PROBLEM_RATING
+import json
+
 from app.spiders.base_spider import BaseSpider
 from app.spiders.cookies import Cookies
 from app.spiders.jigsaw import Jigsaw
@@ -22,8 +23,21 @@ class PintiaSpider(BaseSpider):
     }
     pintia_http = PintiaHttp()
 
-    def get_user_info(self, username, password):
-        self.get_cookies(username, password)
+    def get_user_info(self, oj_username):
+        username = oj_username.oj_username
+        password = oj_username.oj_password
+        try:
+            cookies = json.loads(oj_username.oj_cookies)
+            headers = {
+                'Cookie': Cookies.dict_to_str(cookies)
+            }
+            self.pintia_http.headers.update(headers)
+            assert self.check_cookies(username)
+        except:
+            cookies = self.get_cookies(username, password)
+            modify_oj_username(oj_username.username, oj_username.oj_id, oj_username.oj_username,
+                               oj_username.oj_password, json.dumps(cookies))
+
         assert self.check_cookies(username)
 
         accept_problem_list = []
@@ -37,7 +51,7 @@ class PintiaSpider(BaseSpider):
         return accept_problem_list
 
     def get_problem_info(self, problem_id):
-        return {'rating': DEFAULT_PROBLEM_RATING}
+        pass
 
     def check_cookies(self, email):
         url = 'https://pintia.cn/api/u/current'
@@ -49,7 +63,7 @@ class PintiaSpider(BaseSpider):
         return True
 
     def get_cookies(self, email, password):
-        jigsaw = Jigsaw('https://pintia.cn/auth/login?redirect=https%3A%2F%2Fpintia.cn%2F')
+        jigsaw = Jigsaw('https://pintia.cn/auth/login?redirect=https%3A%2F%2Fpintia.cn%2F', headless=True)
 
         jigsaw.send_keys(email, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[1]/div/input')
         jigsaw.send_keys(password, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[2]/div/input')
@@ -69,10 +83,16 @@ class PintiaSpider(BaseSpider):
         cookies = jigsaw.get_cookies()
         cookies = Cookies.list_to_dict(cookies)
         headers = {
-            'Cookies': Cookies.dict_to_str(cookies)
+            'Cookie': Cookies.dict_to_str(cookies)
         }
         self.pintia_http.headers.update(headers)
+        return cookies
 
 
 if __name__ == '__main__':
-    print(PintiaSpider.get_problem_info('1000'))
+    from app import create_app
+    from app.models.oj_username import get_oj_username, modify_oj_username
+
+    create_app().app_context().push()
+
+    print(PintiaSpider().get_user_info(get_oj_username('31702411', 25)))

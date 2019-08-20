@@ -7,7 +7,8 @@ from app.spiders.spider_http import SpiderHttp
 
 
 class ZuccSpider(BaseSpider):
-    def get_user_info(self, username, password):
+    def get_user_info(self, oj_username):
+        username = oj_username.oj_username
         url = 'http://acm.zucc.edu.cn/userinfo.php?user={}'.format(username)
         res = SpiderHttp().get(url=url)
 
