@@ -1,4 +1,6 @@
 import json
+import time
+
 from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.spiders.base_spider import BaseSpider
 from app.spiders.cookies import Cookies
@@ -20,6 +22,9 @@ class PintiaSpider(BaseSpider):
     problem_set = {
         '91827364500',  # ZOJ
         '994805046380707840',  # 天梯赛
+        '994805148990160896',  # 顶级
+        '994805342720868352',  # 甲级
+        '994805260223102976',  # 乙级
     }
     pintia_http = PintiaHttp()
 
@@ -42,6 +47,7 @@ class PintiaSpider(BaseSpider):
         accept_problem_list = []
 
         for problem_set_id in self.problem_set:
+            time.sleep(3)
             url = 'https://pintia.cn/api/problem-sets/{}/exam-problem-status'.format(problem_set_id)
             res = self.pintia_http.get(url=url).json()
             for problem in res.get('problemStatus', []):
