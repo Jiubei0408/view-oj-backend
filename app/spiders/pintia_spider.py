@@ -77,14 +77,16 @@ class PintiaSpider(BaseSpider):
 
         t = 0
         while 1:
-            jigsaw.run()
+            t += 1
+            print('run on test {}'.format(t))
             try:
+                jigsaw.run()
                 jigsaw.click('//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[6]/button')
                 jigsaw.url_to_be('https://pintia.cn/problem-sets?tab=0')
                 break
             except:
-                t += 1
                 if t >= 5:
+                    print('failed')
                     raise Exception('验证失败')
         cookies = jigsaw.get_cookies()
         jigsaw.close()

@@ -35,9 +35,12 @@ class Jigsaw:
     def run(self):
         bg_image = self.get_images(self.bg_image_class)
         fullbg_image = self.get_images(self.fullbg_image_class)
+        print('get image successful')
         distance = self.get_distance(bg_image, fullbg_image)
+        print('calculate distance successful', distance)
         track = self.get_track(distance)
         self.drag_the_ball(track)
+        print('drag the ball successful')
 
     def create_driver(self, headless: bool):
         options = webdriver.ChromeOptions()
