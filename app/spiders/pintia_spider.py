@@ -1,6 +1,7 @@
 import json
 import time
 
+from requests import Response
 from tenacity import retry, wait_exponential, stop_after_attempt
 
 from app.config.setting import DEFAULT_PROBLEM_RATING
@@ -19,6 +20,16 @@ class PintiaHttp(SpiderHttp):
             'Accept': 'application/json;charset=UTF-8'
         }
         self.headers.update(headers)
+
+    @staticmethod
+    def _end_request(res: Response) -> Response:
+        """
+        request之后的处理，可根据逻辑重载
+        :param res: request之后的Response对象
+        :return: 处理之后的Response对象
+        """
+        res.raise_for_status()
+        return res
 
 
 class PintiaSpider(BaseSpider):
