@@ -8,7 +8,7 @@ from app.models.entity import AcceptProblem, Problem, User
 
 
 def create_accept_problem(username, problem_id, add_rating):
-    if not AcceptProblem.query.filter_by(username=username, problem_id=problem_id).first():
+    try:
         with db.auto_commit():
             r = AcceptProblem()
             r.username = username
@@ -16,7 +16,8 @@ def create_accept_problem(username, problem_id, add_rating):
             r.add_rating = add_rating
             r.create_time = datetime.datetime.now()
             db.session.add(r)
-        return r
+    except:
+        pass
 
 
 def get_accept_problem_list_by_username(username):
