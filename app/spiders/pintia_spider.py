@@ -69,7 +69,7 @@ class PintiaSpider(BaseSpider):
         return True
 
     def get_cookies(self, email, password):
-        jigsaw = Jigsaw('https://pintia.cn/auth/login?redirect=https%3A%2F%2Fpintia.cn%2F', headless=False)
+        jigsaw = Jigsaw('https://pintia.cn/auth/login?redirect=https%3A%2F%2Fpintia.cn%2F', headless=True)
 
         jigsaw.send_keys(email, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[1]/div/input')
         jigsaw.send_keys(password, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[2]/div/input')
