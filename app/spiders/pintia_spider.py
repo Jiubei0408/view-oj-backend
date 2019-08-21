@@ -85,7 +85,7 @@ class PintiaSpider(BaseSpider):
                 jigsaw.url_to_be('https://pintia.cn/problem-sets?tab=0')
                 break
             except:
-                if t >= 5:
+                if t >= 10:
                     print('failed')
                     raise Exception('验证失败')
         cookies = jigsaw.get_cookies()
