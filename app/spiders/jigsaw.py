@@ -35,9 +35,12 @@ class Jigsaw:
     def run(self):
         bg_image = self.get_images(self.bg_image_class)
         fullbg_image = self.get_images(self.fullbg_image_class)
+        print('get image successful')
         distance = self.get_distance(bg_image, fullbg_image)
+        print('calculate distance successful', distance)
         track = self.get_track(distance)
         self.drag_the_ball(track)
+        print('drag the ball successful')
 
     def create_driver(self, headless: bool):
         options = webdriver.ChromeOptions()
@@ -90,7 +93,7 @@ class Jigsaw:
             if len(loc[1]) > 1:
                 L += (R - L) / 2
             elif len(loc[1]) == 1:
-                return loc[1][0] + 5
+                return loc[1][0] + 3
             elif len(loc[1]) < 1:
                 R -= (R - L) / 2
 
@@ -177,34 +180,3 @@ class Jigsaw:
 
     def url_to_be(self, url: str):
         self.WAIT.until(EC.url_to_be(url))
-
-
-if __name__ == '__main__':
-    username = "username"
-    password = "password"
-
-    a = Jigsaw('https://pintia.cn/auth/login?redirect=https%3A%2F%2Fpintia.cn%2F')
-
-    a.send_keys(username, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[1]/div/input')
-    a.send_keys(password, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[2]/div/input')
-    a.click('//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[4]/div/label/input')
-
-    t = 0
-    while 1:
-        a.run()
-        try:
-            a.click('//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[6]/button')
-            a.url_to_be('https://pintia.cn/problem-sets?tab=0')
-            break
-        except:
-            t += 1
-            if t >= 5:
-                raise Exception('验证失败')
-    cookies = a.get_cookies()
-    cookies = Cookies.list_to_dict(cookies)
-    a.close()
-    headers = {
-        'Accept': 'application/json;charset=UTF-8'
-    }
-    res = requests.get('https://pintia.cn/api/u/current', cookies=cookies, headers=headers)
-    print(res.text)

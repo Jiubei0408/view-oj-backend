@@ -1,6 +1,8 @@
 import json
 import time
 
+from tenacity import retry, wait_exponential, stop_after_attempt
+
 from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.spiders.base_spider import BaseSpider
 from app.spiders.cookies import Cookies
@@ -21,11 +23,11 @@ class PintiaHttp(SpiderHttp):
 
 class PintiaSpider(BaseSpider):
     problem_set = {
-        '91827364500',  # ZOJ
-        '994805046380707840',  # 天梯赛
-        '994805148990160896',  # 顶级
-        '994805342720868352',  # 甲级
-        '994805260223102976',  # 乙级
+        ('91827364500', 'Z'),  # ZOJ
+        ('994805046380707840', 'L'),  # 天梯赛
+        ('994805148990160896', 'T'),  # 顶级
+        ('994805342720868352', 'A'),  # 甲级
+        ('994805260223102976', 'B'),  # 乙级
     }
     pintia_http = PintiaHttp()
 
@@ -49,13 +51,13 @@ class PintiaSpider(BaseSpider):
 
         accept_problem_list = []
 
-        for problem_set_id in self.problem_set:
+        for problem_set_id, tag in self.problem_set:
             time.sleep(3)
             url = 'https://pintia.cn/api/problem-sets/{}/exam-problem-status'.format(problem_set_id)
             res = self.pintia_http.get(url=url).json()
             for problem in res.get('problemStatus', []):
                 if problem['problemSubmissionStatus'] == 'PROBLEM_ACCEPTED':
-                    accept_problem_list.append(problem['id'])
+                    accept_problem_list.append(tag + '-' + problem['label'])
         return accept_problem_list
 
     def get_problem_info(self, problem_id):
@@ -75,23 +77,27 @@ class PintiaSpider(BaseSpider):
             return False
         return True
 
+    @retry(wait=wait_exponential(multiplier=1, max=10), stop=stop_after_attempt(5))
     def get_cookies(self, email, password):
         jigsaw = Jigsaw('https://pintia.cn/auth/login?redirect=https%3A%2F%2Fpintia.cn%2F', headless=True)
 
         jigsaw.send_keys(email, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[1]/div/input')
         jigsaw.send_keys(password, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[2]/div/input')
         jigsaw.click('//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[4]/div/label/input')
+        time.sleep(3)
 
         t = 0
         while 1:
-            jigsaw.run()
+            t += 1
+            print('run on test {}'.format(t))
             try:
+                jigsaw.run()
                 jigsaw.click('//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[6]/button')
                 jigsaw.url_to_be('https://pintia.cn/problem-sets?tab=0')
                 break
             except:
-                t += 1
-                if t >= 5:
+                if t >= 10:
+                    print('failed')
                     raise Exception('验证失败')
         cookies = jigsaw.get_cookies()
         jigsaw.close()
@@ -109,4 +115,4 @@ if __name__ == '__main__':
 
     create_app().app_context().push()
 
-    print(PintiaSpider().get_user_info(get_oj_username('31702411', 25)))
+    print(PintiaSpider().get_user_info(get_oj_username('31701293', 25)))
