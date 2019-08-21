@@ -90,7 +90,7 @@ class Jigsaw:
             if len(loc[1]) > 1:
                 L += (R - L) / 2
             elif len(loc[1]) == 1:
-                return loc[1][0] + 5
+                return loc[1][0] + 3
             elif len(loc[1]) < 1:
                 R -= (R - L) / 2
 
