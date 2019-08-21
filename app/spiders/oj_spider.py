@@ -40,6 +40,7 @@ def crawl_accept_problem(username, oj_id):
                 real_oj_name = 'codeforces'
 
             real_oj_id = get_oj_by_oj_name(real_oj_name).id
+
         elif oj_name == 'luogu':
             if problem_id[0] == 'P':
                 real_oj_name = 'luogu'
@@ -60,14 +61,13 @@ def crawl_accept_problem(username, oj_id):
                 continue
 
             real_oj_id = get_oj_by_oj_name(real_oj_name).id
+
         elif oj_name == 'pintia':
             if problem_id[0] == 'Z':
                 real_oj_name = 'zoj'
                 problem_id = problem_id[2:]
-            else:
-                real_oj_name = 'pintia'
+                real_oj_id = get_oj_by_oj_name(real_oj_name).id
 
-            real_oj_id = get_oj_by_oj_name(real_oj_name).id
         elif oj_name == 'codeforces':
             problem_id = "".join(problem_id.split('-'))
 
