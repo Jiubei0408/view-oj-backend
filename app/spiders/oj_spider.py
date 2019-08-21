@@ -60,6 +60,14 @@ def crawl_accept_problem(username, oj_id):
                 continue
 
             real_oj_id = get_oj_by_oj_name(real_oj_name).id
+        elif oj_name == 'pintia':
+            if problem_id[0] == 'Z':
+                real_oj_name = 'zoj'
+                problem_id = problem_id[2:]
+            else:
+                real_oj_name = 'pintia'
+
+            real_oj_id = get_oj_by_oj_name(real_oj_name).id
         elif oj_name == 'codeforces':
             problem_id = "".join(problem_id.split('-'))
 
@@ -88,4 +96,4 @@ if __name__ == '__main__':
 
     create_app().app_context().push()
 
-    crawl_accept_problem('31701030', 25)
+    crawl_accept_problem('31702411', 25)
