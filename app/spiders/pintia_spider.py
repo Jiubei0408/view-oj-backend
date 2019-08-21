@@ -45,6 +45,8 @@ class PintiaSpider(BaseSpider):
                                oj_username.oj_password, json.dumps(cookies))
             assert self.check_cookies(username)
 
+        self.check_in()
+
         accept_problem_list = []
 
         for problem_set_id in self.problem_set:
@@ -58,6 +60,11 @@ class PintiaSpider(BaseSpider):
 
     def get_problem_info(self, problem_id):
         return {'rating': DEFAULT_PROBLEM_RATING}
+
+    def check_in(self):
+        url = 'https://pintia.cn/api/users/checkin'
+        res = self.pintia_http.get(url=url).json()
+        print(res)
 
     def check_cookies(self, email):
         url = 'https://pintia.cn/api/u/current'
