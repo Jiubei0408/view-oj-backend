@@ -74,6 +74,7 @@ class PintiaSpider(BaseSpider):
         jigsaw.send_keys(email, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[1]/div/input')
         jigsaw.send_keys(password, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[2]/div/input')
         jigsaw.click('//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[4]/div/label/input')
+        time.sleep(3)
 
         t = 0
         while 1:
@@ -104,4 +105,4 @@ if __name__ == '__main__':
 
     create_app().app_context().push()
 
-    print(PintiaSpider().get_user_info(get_oj_username('31702411', 25)))
+    print(PintiaSpider().get_user_info(get_oj_username('31701293', 25)))
