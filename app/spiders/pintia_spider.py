@@ -1,6 +1,8 @@
 import json
 import time
 
+from tenacity import retry, wait_exponential, stop_after_attempt
+
 from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.spiders.base_spider import BaseSpider
 from app.spiders.cookies import Cookies
@@ -68,6 +70,7 @@ class PintiaSpider(BaseSpider):
             return False
         return True
 
+    @retry(wait=wait_exponential(multiplier=1, max=10), stop=stop_after_attempt(5))
     def get_cookies(self, email, password):
         jigsaw = Jigsaw('https://pintia.cn/auth/login?redirect=https%3A%2F%2Fpintia.cn%2F', headless=True)
 
