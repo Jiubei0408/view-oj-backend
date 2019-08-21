@@ -63,7 +63,7 @@ class PintiaSpider(BaseSpider):
 
     def check_in(self):
         url = 'https://pintia.cn/api/users/checkin'
-        res = self.pintia_http.get(url=url).json()
+        res = self.pintia_http.post(url=url).json()
         print(res)
 
     def check_cookies(self, email):
