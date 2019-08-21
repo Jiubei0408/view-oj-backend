@@ -8,13 +8,14 @@ def modify_oj_username(username, oj_id, oj_username, oj_password, oj_cookies=Non
     if not r and oj_username:
         create_oj_username(username, oj_id, oj_username, oj_password)
     else:
-        with db.auto_commit():
-            if oj_username:
-                r.oj_username = oj_username
-                r.oj_password = oj_password
-                r.oj_cookies = oj_cookies
-            else:
-                db.session.delete(r)
+        if r:
+            with db.auto_commit():
+                if oj_username:
+                    r.oj_username = oj_username
+                    r.oj_password = oj_password
+                    r.oj_cookies = oj_cookies
+                else:
+                    db.session.delete(r)
 
 
 def create_oj_username(username, oj_id, oj_username, oj_password):
