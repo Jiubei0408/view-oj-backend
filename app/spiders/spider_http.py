@@ -1,6 +1,6 @@
 import requests
 from requests import Response
-from tenacity import retry, stop_after_attempt, wait_exponential
+from tenacity import retry, stop_after_attempt, wait_fixed
 
 
 class SpiderHttp:
@@ -17,7 +17,7 @@ class SpiderHttp:
     def post(self, **kwargs):
         return self._request('POST', **kwargs)
 
-    @retry(wait=wait_exponential(multiplier=1, max=10), stop=stop_after_attempt(5))
+    @retry(wait=wait_fixed(10), stop=stop_after_attempt(5))
     def _request(self, method: str, url: str, params: dict = None, data: dict = None,
                  encoding: str = None, headers: dict = None) -> Response:
         """

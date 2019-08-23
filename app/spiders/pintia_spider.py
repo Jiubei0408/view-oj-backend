@@ -19,6 +19,11 @@ class PintiaHttp(SpiderHttp):
         }
         self.headers.update(headers)
 
+    @staticmethod
+    def _end_request(res):
+        res.raise_for_status()
+        return res
+
 
 class PintiaSpider(BaseSpider):
     problem_set = {
@@ -46,7 +51,7 @@ class PintiaSpider(BaseSpider):
                                oj_username.oj_password, json.dumps(cookies))
             assert self.check_cookies(username)
 
-        self.check_in()
+        # self.check_in()
 
         accept_problem_list = []
 
@@ -78,7 +83,7 @@ class PintiaSpider(BaseSpider):
 
     @retry(wait=wait_exponential(multiplier=1, max=10), stop=stop_after_attempt(5))
     def get_cookies(self, email, password):
-        jigsaw = Jigsaw('https://pintia.cn/auth/login?redirect=https%3A%2F%2Fpintia.cn%2F', headless=True)
+        jigsaw = Jigsaw('https://pintia.cn/auth/login?redirect=https%3A%2F%2Fpintia.cn%2F', headless=False)
 
         jigsaw.send_keys(email, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[1]/div/input')
         jigsaw.send_keys(password, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[2]/div/input')
