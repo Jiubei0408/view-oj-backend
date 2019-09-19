@@ -41,7 +41,7 @@ def get_task(task_name, kwargs):
 
 
 def get_task_count():
-    return Task.query.filter(Task.status != 2).count()
+    return Task.query.filter(Task.status < 2).count()
 
 
 if __name__ == '__main__':
