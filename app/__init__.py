@@ -1,10 +1,11 @@
 from flask_cors import CORS
 from flask_login import LoginManager
-
+from flask_redis import FlaskRedis
 from .app import Flask
 
 cors = CORS(supports_credentials=True)
 login_manager = LoginManager()
+redis = FlaskRedis()
 
 
 def register_blueprints(flask_app):
@@ -26,6 +27,9 @@ def register_plugin(flask_app):
 
     # 注册用户管理器
     login_manager.init_app(flask_app)
+
+    # 注册redis
+    redis.init_app(flask_app)
 
 
 def create_app():

@@ -11,6 +11,8 @@ SECRET_KEY = ''
 
 # 定义celery信息
 BROKER_URL = ''
-
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = 'Asia/Shanghai'
+
+# 定义redis信息
+REDIS_URL = ''

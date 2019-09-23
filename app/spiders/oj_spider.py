@@ -4,7 +4,6 @@ from app.models.oj import get_oj_by_oj_id, get_oj_by_oj_name, get_oj_list
 from app.models.oj_username import get_oj_username
 from app.models.problem import get_problem_by_problem_info, get_problem_by_problem_id, modify_problem_rating
 # 导入spider
-from app.models.task import get_task, create_task
 from app.spiders.codeforces_spider import CodeforcesSpider
 from app.spiders.hdu_spider import HduSpider
 from app.spiders.luogu_spider import LuoguSpider
