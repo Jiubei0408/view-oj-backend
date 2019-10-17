@@ -21,17 +21,18 @@ class LuoguHttp(SpiderHttp):
 class LuoguSpider(BaseSpider):
     @staticmethod
     def get_user_id(username):
-        url = 'https://www.luogu.org/space/ajax_getuid?username={}'.format(username)
-        res = LuoguHttp().get(url=url)
-        res_json = json.loads(res.text)
-        return res_json.get('more', dict()).get('uid')
+        return username
+        # url = 'https://www.luogu.org/space/ajax_getuid?username={}'.format(username)
+        # res = LuoguHttp().get(url=url)
+        # res_json = json.loads(res.text)
+        # return res_json.get('more', dict()).get('uid')
 
     def get_user_info(self, oj_username):
         username = oj_username.oj_username
         url = 'https://www.luogu.org/space/show?uid={}'.format(self.get_user_id(username))
         res = LuoguHttp().get(url=url)
         r = re.findall(
-            '(?!<span style="display:none">\n)\[<a data-pjax href="/problemnew/show/.*">(.*)</a>\](?!\n</span>)',
+            r'(?!<span style="display:none">\n)\[<a data-pjax href="/problemnew/show/.*">(.*)</a>\](?!\n</span>)',
             res.text)
         return r
 
@@ -40,7 +41,7 @@ class LuoguSpider(BaseSpider):
         res = LuoguHttp().get(url=url)
 
         try:
-            res_raw = re.search('decodeURIComponent\("(.*)"\)\);', res.text).group(1)
+            res_raw = re.search(r'decodeURIComponent\("(.*)"\)\);', res.text).group(1)
             res_str = unquote(res_raw)
             res_json = execjs.eval(res_str)
 
@@ -70,4 +71,8 @@ class LuoguSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(LuoguSpider().get_problem_info('1002'))
+    from app.models.oj_username import OJUsername
+
+    oj_username = OJUsername()
+    oj_username.oj_username = 'taoting'
+    print(LuoguSpider().get_user_info(oj_username))
