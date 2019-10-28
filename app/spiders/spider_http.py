@@ -19,7 +19,7 @@ class SpiderHttp:
 
     @retry(wait=wait_fixed(10), stop=stop_after_attempt(5))
     def _request(self, method: str, url: str, params: dict = None, data: dict = None,
-                 encoding: str = None, headers: dict = None) -> Response:
+                 encoding: str = 'utf8', headers: dict = None) -> Response:
         """
         http请求
         :param method: 请求方法
@@ -33,7 +33,7 @@ class SpiderHttp:
             self.headers.update(headers)
         url, data = self._before_request(url, params, data)
         res = self.sess.request(method, url=url, data=data)
-        res = self._end_request(res)
+        res = self._end_request(res, encoding)
         return res
 
     @staticmethod
@@ -50,12 +50,11 @@ class SpiderHttp:
         return url, data
 
     @staticmethod
-    def _end_request(res: Response) -> Response:
+    def _end_request(res: Response, encoding: str) -> Response:
         """
         request之后的处理，可根据逻辑重载
         :param res: request之后的Response对象
         :return: 处理之后的Response对象
         """
-        # 逻辑写这里
-        pass
+        res.encoding = encoding
         return res
