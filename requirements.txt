@@ -18,3 +18,5 @@ numpy
 beautifulsoup4
 pillow
 selenium
+xgboost
+scikit-learn
