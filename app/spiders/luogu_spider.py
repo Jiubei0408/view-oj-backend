@@ -46,8 +46,8 @@ class LuoguSpider(BaseSpider):
             res_str = unquote(res_raw)
             res_json = execjs.eval(res_str)
 
-            total = int(res_json['totalAccepted'])
-            accept = int(res_json['totalSubmit'])
+            total = res_json['currentData']['problem']['totalSubmit']
+            accept = res_json['currentData']['problem']['totalAccepted']
 
             rating = calculate_problem_rating(total, accept)
 
@@ -62,4 +62,4 @@ if __name__ == '__main__':
 
     oj_username = OJUsername()
     oj_username.oj_username = 'taoting'
-    print(LuoguSpider().get_problem_info('4016'))
+    print(LuoguSpider().get_problem_info('4582'))

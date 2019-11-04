@@ -15,26 +15,9 @@ def calculate_problem_rating(total, accept):
     try:
         predict_rating = int(xgb_model.predict([accept, total, accept_rate])[0])
     except:
-        predict_rating = -9999999
+        predict_rating = DEFAULT_USER_RATING
 
-    if accept >= 30000:
-        rating = 800
-    elif accept_rate > 0.6:
-        rating = 800
-    elif accept_rate > 0.4:
-        rating = 1200
-    elif accept_rate > 0.3:
-        rating = 1600
-    elif accept_rate > 0.2:
-        rating = 2000
-    elif accept_rate > 0.1:
-        rating = 2400
-    else:
-        rating = 3000
-
-    if abs(rating - predict_rating) < 1000:
-        return predict_rating
-    return rating
+    return predict_rating
 
 
 def calculate_user_add_rating(user_rating, problem_rating):
