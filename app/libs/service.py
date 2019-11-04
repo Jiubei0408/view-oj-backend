@@ -3,7 +3,10 @@ from app.models.accept_problem import get_accept_problem_list_by_username, modif
 import xgboost as xgb
 
 xgb_model = xgb.XGBRegressor()
-xgb_model.load_model('rating.model')
+try:
+    xgb_model.load_model('rating.model')
+except:
+    xgb_model.load_model('../../rating.model')
 
 
 def calculate_problem_rating(total, accept):

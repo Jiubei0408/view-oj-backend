@@ -4,6 +4,7 @@ import execjs
 from urllib.parse import unquote
 
 from app.config.setting import DEFAULT_PROBLEM_RATING
+from app.libs.service import calculate_problem_rating
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
@@ -45,24 +46,10 @@ class LuoguSpider(BaseSpider):
             res_str = unquote(res_raw)
             res_json = execjs.eval(res_str)
 
-            difficulty = res_json['currentData']['problem']['difficulty']
+            total = int(res_json['totalAccepted'])
+            accept = int(res_json['totalSubmit'])
 
-            if difficulty == 1:
-                rating = 800
-            elif difficulty == 2:
-                rating = 1200
-            elif difficulty == 3:
-                rating = 1600
-            elif difficulty == 4:
-                rating = 2000
-            elif difficulty == 5:
-                rating = 2400
-            elif difficulty == 6:
-                rating = 2800
-            elif difficulty == 7:
-                rating = 3200
-            else:
-                rating = DEFAULT_PROBLEM_RATING
+            rating = calculate_problem_rating(total, accept)
 
         except:
             rating = DEFAULT_PROBLEM_RATING
@@ -75,4 +62,4 @@ if __name__ == '__main__':
 
     oj_username = OJUsername()
     oj_username.oj_username = 'taoting'
-    print(LuoguSpider().get_user_info(oj_username))
+    print(LuoguSpider().get_problem_info('4016'))

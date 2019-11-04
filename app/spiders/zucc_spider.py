@@ -6,18 +6,27 @@ from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
 
+class ZuccHttp(SpiderHttp):
+    def __init__(self):
+        super().__init__()
+        headers = {
+            'cookie': 'resolveIDs=0; order_dir_list_by=1A; PHPSESSID=ni7c6l5o3u2mgbl98d9ubi0fo5',
+        }
+        self.headers.update(headers)
+
+
 class ZuccSpider(BaseSpider):
     def get_user_info(self, oj_username):
         username = oj_username.oj_username
         url = 'http://acm.zucc.edu.cn/userinfo.php?user={}'.format(username)
-        res = SpiderHttp().get(url=url)
+        res = ZuccHttp().get(url=url)
 
         r = re.findall(r'p\((\d+),\d+\);', res.text)
         return r
 
     def get_problem_info(self, problem_id):
         url = 'http://acm.zucc.edu.cn/problem.php?id={}'.format(problem_id)
-        res = SpiderHttp().get(url=url)
+        res = ZuccHttp().get(url=url)
 
         try:
             total = int(re.search(r'Submit: </span>(\d+)(&nbsp;)*<span', res.text).group(1))
