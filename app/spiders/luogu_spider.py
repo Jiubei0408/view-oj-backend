@@ -49,7 +49,7 @@ class LuoguSpider(BaseSpider):
             total = res_json['currentData']['problem']['totalSubmit']
             accept = res_json['currentData']['problem']['totalAccepted']
 
-            rating = calculate_problem_rating(total, accept)
+            rating = int(calculate_problem_rating(total, accept) * 1.1)
 
         except:
             rating = DEFAULT_PROBLEM_RATING

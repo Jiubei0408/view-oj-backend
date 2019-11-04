@@ -31,7 +31,7 @@ class ZuccSpider(BaseSpider):
         try:
             total = int(re.search(r'Submit: </span>(\d+)(&nbsp;)*<span', res.text).group(1))
             accept = int(re.search(r'Solved: </span>(\d+)(&nbsp;)*<br>', res.text).group(1))
-            rating = calculate_problem_rating(total, accept)
+            rating = int(calculate_problem_rating(total, accept) * 0.8)
         except:
             rating = DEFAULT_PROBLEM_RATING
 
@@ -39,4 +39,4 @@ class ZuccSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(ZuccSpider().get_problem_info('1000'))
+    print(ZuccSpider().get_problem_info('1962'))
