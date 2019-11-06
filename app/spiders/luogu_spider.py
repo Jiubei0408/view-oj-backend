@@ -30,12 +30,17 @@ class LuoguSpider(BaseSpider):
 
     def get_user_info(self, oj_username):
         username = oj_username.oj_username
-        url = 'https://www.luogu.org/space/show?uid={}'.format(self.get_user_id(username))
+        url = 'https://www.luogu.org/user/{}'.format(self.get_user_id(username))
         res = LuoguHttp().get(url=url)
-        r = re.findall(
-            r'(?!<span style="display:none">\n)\[<a data-pjax href="/problemnew/show/.*">(.*)</a>\](?!\n</span>)',
-            res.text)
-        return r
+        res_raw = re.search(r'decodeURIComponent\("(.*)"\)\);', res.text).group(1)
+        res_str = unquote(res_raw)
+        res_json = execjs.eval(res_str)
+
+        accept_problem_list = []
+        for problem in res_json['currentData']['passedProblems']:
+            accept_problem_list.append(problem['pid'])
+
+        return accept_problem_list
 
     def get_problem_info(self, problem_id):
         url = 'https://www.luogu.org/problem/P{}'.format(problem_id)
@@ -61,5 +66,5 @@ if __name__ == '__main__':
     from app.models.oj_username import OJUsername
 
     oj_username = OJUsername()
-    oj_username.oj_username = 'taoting'
-    print(LuoguSpider().get_problem_info('4582'))
+    oj_username.oj_username = '62916'
+    print(LuoguSpider().get_user_info(oj_username))
