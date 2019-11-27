@@ -14,7 +14,7 @@ class LuoguHttp(SpiderHttp):
         super().__init__()
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36',
-            'host': 'www.luogu.org'
+            'host': 'www.luogu.com.cn'
         }
         self.headers.update(headers)
 
@@ -30,7 +30,7 @@ class LuoguSpider(BaseSpider):
 
     def get_user_info(self, oj_username):
         username = oj_username.oj_username
-        url = 'https://www.luogu.org/user/{}'.format(self.get_user_id(username))
+        url = 'https://www.luogu.com.cn/user/{}'.format(self.get_user_id(username))
         res = LuoguHttp().get(url=url)
         res_raw = re.search(r'decodeURIComponent\("(.*)"\)\);', res.text).group(1)
         res_str = unquote(res_raw)
@@ -43,7 +43,7 @@ class LuoguSpider(BaseSpider):
         return accept_problem_list
 
     def get_problem_info(self, problem_id):
-        url = 'https://www.luogu.org/problem/P{}'.format(problem_id)
+        url = 'https://www.luogu.com.cn/problem/P{}'.format(problem_id)
         res = LuoguHttp().get(url=url)
 
         try:
