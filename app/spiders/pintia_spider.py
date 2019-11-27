@@ -19,11 +19,6 @@ class PintiaHttp(SpiderHttp):
         }
         self.headers.update(headers)
 
-    @staticmethod
-    def _end_request(res):
-        res.raise_for_status()
-        return res
-
 
 class PintiaSpider(BaseSpider):
     problem_set = {
