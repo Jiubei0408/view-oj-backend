@@ -36,7 +36,7 @@ def crawl_accept_problem(username, oj_id):
 
     for problem_id in all_accept_problem:
         real_oj_id = oj_id
-        if oj_name == 'vjudge':
+        if oj_name == 'vjudge' or oj_name == 'nit':
             real_oj_name, problem_id = problem_id.split('-')
             real_oj_name = real_oj_name.lower()
             if real_oj_name == 'gym':
@@ -100,4 +100,4 @@ if __name__ == '__main__':
 
     create_app().app_context().push()
 
-    crawl_accept_problem('31801155', 25)
+    crawl_accept_problem('31702411', 28)
