@@ -16,6 +16,7 @@ from app.spiders.hysbz_spider import HysbzSpider
 from app.spiders.pintia_spider import PintiaSpider
 from app.spiders.loj_spider import LojSpider
 from app.spiders.nit_spider import NitSpider
+from app.spiders.nowcoder_spider import NowcoderSpider
 
 
 def crawl_accept_problem(username, oj_id):
