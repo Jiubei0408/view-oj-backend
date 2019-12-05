@@ -1,3 +1,5 @@
+.gitignore
+*.pyc
 .idea/
 app/config/secure.py
 venv
