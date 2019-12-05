@@ -42,6 +42,10 @@ def crawl_accept_problem(username, oj_id):
             real_oj_name = real_oj_name.lower()
             if real_oj_name == 'gym':
                 real_oj_name = 'codeforces'
+            if real_oj_name == 'zju':
+                real_oj_name = 'zoj'
+            if real_oj_name == 'pku':
+                real_oj_name = 'poj'
 
             real_oj_id = get_oj_by_oj_name(real_oj_name).id
 
