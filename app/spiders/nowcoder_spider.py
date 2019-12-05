@@ -1,5 +1,6 @@
 import re
 from app.config.setting import DEFAULT_PROBLEM_RATING
+from app.libs.service import calculate_problem_rating
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
@@ -24,12 +25,17 @@ class NowcoderSpider(BaseSpider):
         return data
 
     def get_problem_info(self, problem_id):
-        return {'rating': DEFAULT_PROBLEM_RATING}
+        star_rating = [0, 800, 1200, 1600, 2000, 2400]
+        try:
+            url = 'https://ac.nowcoder.com/acm/problem/list?keyword={}'.format(problem_id)
+            res = SpiderHttp().get(url=url)
+            data = re.findall(r'<td>\n(\d+)星\n</td>', res.text)
+            star = int(data[0][0])
+            rating = star_rating[star]
+        except:
+            rating = DEFAULT_PROBLEM_RATING
+        return {'rating': rating}
 
 
 if __name__ == '__main__':
-    from app.models.oj_username import OJUsername
-
-    oj_username = OJUsername()
-    oj_username.oj_username = '4292239'
-    print(NowcoderSpider().get_user_info(oj_username))
+    print(NowcoderSpider().get_problem_info('20123'))
