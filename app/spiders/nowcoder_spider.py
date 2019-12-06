@@ -7,7 +7,7 @@ from app.spiders.spider_http import SpiderHttp
 class NowcoderSpider(BaseSpider):
     def get_user_info(self, oj_username):
         username = oj_username.oj_username
-        uid = NowcoderSpider.get_id_by_username(username)
+        uid = NowcoderSpider._get_id_by_username(username)
         if uid:
             username = uid
         index = 1
@@ -39,7 +39,7 @@ class NowcoderSpider(BaseSpider):
         return {'rating': rating}
 
     @staticmethod
-    def get_id_by_username(username):
+    def _get_id_by_username(username):
         url = 'https://www.nowcoder.com/search?type=all&query={}'.format(username)
         res = SpiderHttp().get(url=url)
         test = re.findall(r'/profile/(\d+)', res.text)
