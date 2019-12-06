@@ -1,6 +1,5 @@
 import re
 from app.config.setting import DEFAULT_PROBLEM_RATING
-from app.libs.service import calculate_problem_rating
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
