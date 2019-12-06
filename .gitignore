@@ -3,3 +3,5 @@
 .idea/
 app/config/secure.py
 venv
+*.db
+test.py
