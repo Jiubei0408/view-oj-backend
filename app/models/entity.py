@@ -111,3 +111,10 @@ class ProblemRelationship(Base):
     problem = relationship("app.models.entity.Problem")
     problem_set_id = Column(Integer, ForeignKey('problem_set.id'))
     problem_set = relationship("app.models.entity.ProblemSet")
+
+
+class Mapping(Base):
+    __tablename__ = 'mapping'
+
+    key = Column(String(100), primary_key=True)
+    value = Column(String(10000))
