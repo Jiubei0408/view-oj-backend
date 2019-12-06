@@ -1,15 +1,12 @@
 import json
 import re
-import execjs
-from urllib.parse import unquote
-
 from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.libs.service import calculate_problem_rating
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
 
-class JskSpider(BaseSpider):
+class JisuankeSpider(BaseSpider):
     def get_user_info(self, oj_username):
         username = oj_username.oj_username
         page = 1

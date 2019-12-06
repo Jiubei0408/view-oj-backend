@@ -17,7 +17,7 @@ from app.spiders.pintia_spider import PintiaSpider
 from app.spiders.loj_spider import LojSpider
 from app.spiders.nit_spider import NitSpider
 from app.spiders.nowcoder_spider import NowcoderSpider
-from app.spiders.jsk_spider import JskSpider
+from app.spiders.jisuanke_spider import JisuankeSpider
 
 
 def crawl_accept_problem(username, oj_id):
@@ -47,6 +47,8 @@ def crawl_accept_problem(username, oj_id):
                 real_oj_name = 'zoj'
             if real_oj_name == 'pku':
                 real_oj_name = 'poj'
+            if real_oj_name == '计蒜客':
+                real_oj_name = 'jisuanke'
 
             real_oj_id = get_oj_by_oj_name(real_oj_name).id
 
