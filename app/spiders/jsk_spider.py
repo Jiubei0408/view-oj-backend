@@ -23,6 +23,10 @@ class JskSpider(BaseSpider):
             for data in res_json['data']:
                 problem_url = data['url']
                 problem_id = re.findall(r'//nanti.jisuanke.com/t/(.*)', problem_url)[0]
+                # 需要kv表优化
+                res = SpiderHttp().get(url='https:'+problem_url)
+                actual_url = res.history[1].url
+                problem_id = re.findall('http://nanti.jisuanke.com/t/(.*)', actual_url)[0]
                 accept_list.append(problem_id)
             page += 1
         return accept_list
@@ -32,8 +36,8 @@ class JskSpider(BaseSpider):
             url = 'https://nanti.jisuanke.com/t/{}'.format(problem_id)
             res = SpiderHttp().get(url=url)
             data = re.findall(r'通过 (\d+) 人次 / 提交 (\d+) 人次', res.text)
-            accept = data[0][0]
-            total = data[0][1]
+            accept = int(data[0][0])
+            total = int(data[0][1])
             rating = int(calculate_problem_rating(total, accept))
 
         except:
@@ -43,4 +47,8 @@ class JskSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(JskSpider().get_problem_info('A1000'))
+    from app.models.oj_username import OJUsername
+
+    oj_username = OJUsername()
+    oj_username.oj_username = '4lkvgc2'
+    print(JskSpider().get_user_info(oj_username))
