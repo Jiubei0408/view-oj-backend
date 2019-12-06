@@ -21,16 +21,15 @@ class LuoguHttp(SpiderHttp):
 
 class LuoguSpider(BaseSpider):
     @staticmethod
-    def get_user_id(username):
-        return username
-        # url = 'https://www.luogu.org/space/ajax_getuid?username={}'.format(username)
-        # res = LuoguHttp().get(url=url)
-        # res_json = json.loads(res.text)
-        # return res_json.get('more', dict()).get('uid')
+    def _get_user_id(username):
+        url = 'https://www.luogu.com.cn/fe/api/user/search?keyword={}'.format(username)
+        res = LuoguHttp().get(url=url)
+        res_json = json.loads(res.text)
+        return res_json['users'][0]['uid']
 
     def get_user_info(self, oj_username):
         username = oj_username.oj_username
-        url = 'https://www.luogu.com.cn/user/{}'.format(self.get_user_id(username))
+        url = 'https://www.luogu.com.cn/user/{}'.format(self._get_user_id(username))
         res = LuoguHttp().get(url=url)
         res_raw = re.search(r'decodeURIComponent\("(.*)"\)\);', res.text).group(1)
         res_str = unquote(res_raw)
@@ -66,5 +65,6 @@ if __name__ == '__main__':
     from app.models.oj_username import OJUsername
 
     oj_username = OJUsername()
-    oj_username.oj_username = '62916'
+    oj_username.oj_username = 'sumingzeng'
     print(LuoguSpider().get_user_info(oj_username))
+    print(LuoguSpider().get_problem_info('1001'))
