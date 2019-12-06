@@ -33,7 +33,7 @@ class LuoguSpider(BaseSpider):
         res = LuoguHttp().get(url=url)
         res_raw = re.search(r'decodeURIComponent\("(.*)"\)\);', res.text).group(1)
         res_str = unquote(res_raw)
-        res_json = json.loads(res_str)
+        res_json = execjs.eval(res_str)
 
         accept_problem_list = []
         for problem in res_json['currentData']['passedProblems']:
@@ -48,7 +48,7 @@ class LuoguSpider(BaseSpider):
         try:
             res_raw = re.search(r'decodeURIComponent\("(.*)"\)\);', res.text).group(1)
             res_str = unquote(res_raw)
-            res_json = json.loads(res_str)
+            res_json = execjs.eval(res_str)
 
             total = res_json['currentData']['problem']['totalSubmit']
             accept = res_json['currentData']['problem']['totalAccepted']
