@@ -36,7 +36,7 @@ class CodeforcesSpider(BaseSpider):
 
     @staticmethod
     def _get_gym_constest_rating(contest_id):
-        star_rating = [0, 1200, 1600, 2000, 2400, 2800]
+        star_rating = [DEFAULT_PROBLEM_RATING, 1200, 1600, 2000, 2400, 2800]
         stars = mapping.get_value('gym-{}'.format(contest_id))
         if stars is not None:
             return star_rating[int(stars)]

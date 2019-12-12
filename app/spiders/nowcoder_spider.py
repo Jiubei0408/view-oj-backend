@@ -27,7 +27,7 @@ class NowcoderSpider(BaseSpider):
         return data
 
     def get_problem_info(self, problem_id):
-        star_rating = [0, 800, 1200, 1600, 2000, 2400]
+        star_rating = [DEFAULT_PROBLEM_RATING, 800, 1200, 1600, 2000, 2400]
         try:
             url = 'https://ac.nowcoder.com/acm/problem/list?keyword={}'.format(problem_id)
             res = SpiderHttp().get(url=url)
