@@ -4,6 +4,8 @@ import re
 from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
+import app.models.mapping as mapping
+from bs4 import BeautifulSoup
 
 
 class CodeforcesSpider(BaseSpider):
@@ -26,10 +28,35 @@ class CodeforcesSpider(BaseSpider):
             except:
                 rating = DEFAULT_PROBLEM_RATING
         else:  # gym
-            rating = DEFAULT_PROBLEM_RATING
-
+            try:
+                rating = self._get_gym_constest_rating(problem_id_1)
+            except:
+                rating = DEFAULT_PROBLEM_RATING
         return {'rating': rating}
+
+    @staticmethod
+    def _get_gym_constest_rating(contest_id):
+        star_rating = [0, 1200, 1600, 2000, 2400, 2800]
+        stars = mapping.get_value('gym-{}'.format(contest_id))
+        if stars is not None:
+            return star_rating[int(stars)]
+        url = 'https://codeforces.com/gyms'
+        req = SpiderHttp()
+        res = req.get(url=url)
+        soup = BeautifulSoup(res.text, 'lxml')
+        token = soup.find('input', {'name': 'csrf_token'})['value']
+        res = req.post(url=url, data={
+            'csrf_token': token,
+            'searchByNameOrIdQuery': contest_id,
+            'searchByProblem': False,
+        })
+        soup = BeautifulSoup(res.text, 'lxml')
+        stars = len(soup.find('tr', {'data-contestid': contest_id}).findAll('img'))
+        mapping.set_value('gym-{}'.format(contest_id), str(stars))
+        return star_rating[stars]
 
 
 if __name__ == '__main__':
-    print(CodeforcesSpider().get_problem_info('1197F'))
+    from app import create_app
+    create_app().app_context().push()
+    print(CodeforcesSpider().get_problem_info('102448A'))
