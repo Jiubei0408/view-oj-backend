@@ -30,8 +30,7 @@ class CodeforcesSpider(BaseSpider):
         else:  # gym
             try:
                 rating = self._get_gym_constest_rating(problem_id_1)
-            except Exception as e:
-                print(e)
+            except:
                 rating = DEFAULT_PROBLEM_RATING
         return {'rating': rating}
 
