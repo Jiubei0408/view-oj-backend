@@ -11,10 +11,26 @@ from bs4 import BeautifulSoup
 class CodeforcesSpider(BaseSpider):
     def get_user_info(self, oj_username):
         username = oj_username.oj_username
-        url = 'http://new.npuacm.info/api/crawlers/codeforces/{}'.format(username)
-        res = SpiderHttp().get(url=url)
-        res_json = json.loads(res.text)
-        return res_json.get('data', dict()).get('solvedList', list())
+        page = 1
+        accept_problem_list = []
+        while True:
+            url = 'http://codeforces.com/submissions/{}/page/{}'.format(username, page)
+            res = SpiderHttp().get(url=url)
+            soup = BeautifulSoup(res.text, 'lxml')
+            res = soup.findAll('tr', {'data-submission-id': re.compile(r'[0-9]+?')})
+            ok = False
+            for i in res:
+                if len(i.findAll('span', {'class': 'verdict-accepted'})) > 0:
+                    problem = re.findall(r'/(\d+)/problem/([A-Za-z])',
+                                         i.find('a', {'href': re.compile(r'.*/problem/.*')})['href'])
+                    problem_id = '-'.join(problem[0])
+                    if problem_id not in accept_problem_list:
+                        accept_problem_list.append(problem_id)
+                        ok = True
+            if not ok:
+                break
+            page += 1
+        return accept_problem_list
 
     def get_problem_info(self, problem_id):
         p = re.match('^([0-9]+)([a-zA-Z]+[0-9]*)$', problem_id)
@@ -57,6 +73,8 @@ class CodeforcesSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    from app import create_app
-    create_app().app_context().push()
-    print(CodeforcesSpider().get_problem_info('102448A'))
+    from app.models.oj_username import OJUsername
+
+    oj_username = OJUsername()
+    oj_username.oj_username = 'boboge'
+    print(CodeforcesSpider().get_user_info(oj_username))

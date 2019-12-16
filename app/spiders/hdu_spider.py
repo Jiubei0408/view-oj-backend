@@ -5,15 +5,17 @@ from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.libs.service import calculate_problem_rating
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
+from bs4 import BeautifulSoup
 
 
 class HduSpider(BaseSpider):
     def get_user_info(self, oj_username):
         username = oj_username.oj_username
-        url = 'http://new.npuacm.info/api/crawlers/hdu/{}'.format(username)
+        url = 'http://acm.hdu.edu.cn/userstatus.php?user={}'.format(username)
         res = SpiderHttp().get(url=url)
-        res_json = json.loads(res.text)
-        return res_json.get('data', dict()).get('solvedList', list())
+        soup = BeautifulSoup(res.text, 'lxml')
+        res = soup.findAll('p', {'align': 'left'})[0]
+        return re.findall(r'p\((\d+).*?\);', res.text)
 
     def get_problem_info(self, problem_id):
         url = 'http://acm.hdu.edu.cn/showproblem.php?pid={}'.format(problem_id)
@@ -31,4 +33,8 @@ class HduSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(HduSpider().get_problem_info('1000'))
+    from app.models.oj_username import OJUsername
+
+    oj_username = OJUsername()
+    oj_username.oj_username = 'sumingzeng'
+    print(HduSpider().get_user_info(oj_username))
