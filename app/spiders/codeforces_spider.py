@@ -11,10 +11,17 @@ from bs4 import BeautifulSoup
 class CodeforcesSpider(BaseSpider):
     def get_user_info(self, oj_username):
         username = oj_username.oj_username
-        url = 'http://new.npuacm.info/api/crawlers/codeforces/{}'.format(username)
+        accept_problem_list = []
+        url = 'http://codeforces.com/api/user.status?handle={}'.format(username)
         res = SpiderHttp().get(url=url)
-        res_json = json.loads(res.text)
-        return res_json.get('data', dict()).get('solvedList', list())
+        res = json.loads(res.text)
+        if res['status'] != 'OK':
+            return []
+        res = res['result']
+        for rec in res:
+            if rec['verdict'] == 'OK':
+                accept_problem_list.append('{}-{}'.format(rec['problem']['contestId'], rec['problem']['index']))
+        return accept_problem_list
 
     def get_problem_info(self, problem_id):
         p = re.match('^([0-9]+)([a-zA-Z]+[0-9]*)$', problem_id)
@@ -57,6 +64,8 @@ class CodeforcesSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    from app import create_app
-    create_app().app_context().push()
-    print(CodeforcesSpider().get_problem_info('102448A'))
+    from app.models.oj_username import OJUsername
+
+    oj_username = OJUsername()
+    oj_username.oj_username = 'StupidTurtle'
+    print(CodeforcesSpider().get_user_info(oj_username))
