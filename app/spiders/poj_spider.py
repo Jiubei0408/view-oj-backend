@@ -10,10 +10,10 @@ from app.spiders.spider_http import SpiderHttp
 class PojSpider(BaseSpider):
     def get_user_info(self, oj_username):
         username = oj_username.oj_username
-        url = 'http://new.npuacm.info/api/crawlers/poj/{}'.format(username)
+        url = 'http://poj.org/userstatus?user_id={}'.format(username)
         res = SpiderHttp().get(url=url)
-        res_json = json.loads(res.text)
-        return res_json.get('data', dict()).get('solvedList', list())
+        accept_problem_list = re.findall(r'p\((\d+)\)', res.text)
+        return accept_problem_list
 
     def get_problem_info(self, problem_id):
         url = 'http://poj.org/problem?id={}'.format(problem_id)
@@ -29,4 +29,8 @@ class PojSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(PojSpider().get_problem_info('1000'))
+    from app.models.oj_username import OJUsername
+
+    oj_username = OJUsername()
+    oj_username.oj_username = 'Hile_M'
+    print(PojSpider().get_user_info(oj_username))
