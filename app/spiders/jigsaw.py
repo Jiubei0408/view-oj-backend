@@ -142,7 +142,7 @@ class Jigsaw:
             ActionChains(self.driver).move_by_offset(xoffset=x, yoffset=random.randint(-5, 5)).perform()
             track.remove(x)
         time.sleep(0.1)
-        imitate = ActionChains(self.driver).move_by_offset(xoffset=-1, yoffset=random.randint(-5, 5))
+        imitate = ActionChains(self.driver).move_by_offset(xoffset=1, yoffset=random.randint(-5, 5))
         time.sleep(0.015)
         imitate.perform()
         time.sleep(random.randint(6, 10) / 10)

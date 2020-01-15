@@ -80,23 +80,20 @@ class PintiaSpider(BaseSpider):
     def get_cookies(self, email, password):
         jigsaw = Jigsaw('https://pintia.cn/auth/login?redirect=https%3A%2F%2Fpintia.cn%2F', headless=False)
 
-        jigsaw.send_keys(email, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[1]/div/input')
-        jigsaw.send_keys(password, '//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[2]/div/input')
-        jigsaw.click('//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[4]/div/label/input')
-        time.sleep(3)
+        jigsaw.send_keys(email, '//input[@name="email"]')
+        jigsaw.send_keys(password, '//input[@name="password"]')
+        jigsaw.click('//button[@class="btn btn-primary"]')
 
         t = 0
         while 1:
             t += 1
-            print('run on test {}'.format(t))
             try:
+                time.sleep(3)
                 jigsaw.run()
-                jigsaw.click('//*[@id="sparkling-daydream"]/div[3]/div/div[2]/form/div[6]/button')
                 jigsaw.url_to_be('https://pintia.cn/problem-sets?tab=0')
                 break
             except:
                 if t >= 10:
-                    print('failed')
                     raise Exception('验证失败')
         cookies = jigsaw.get_cookies()
         jigsaw.close()
@@ -114,4 +111,4 @@ if __name__ == '__main__':
 
     create_app().app_context().push()
 
-    print(PintiaSpider().get_user_info(get_oj_username('31701293', 25)))
+    print(PintiaSpider().get_user_info(get_oj_username('31801054', 25)))
