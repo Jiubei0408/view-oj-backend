@@ -80,6 +80,7 @@ class OJUsername(Base):
     oj_username = Column(String(100), nullable=False)
     oj_password = Column(String(100))
     oj_cookies = Column(String(10000))
+    last_success_time = Column(DateTime)
 
 
 class Task(Base):

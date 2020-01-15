@@ -2,7 +2,7 @@ from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.libs.service import calculate_user_add_rating
 from app.models.accept_problem import create_accept_problem, get_accept_problem_list_by_oj_id, get_rating_by_username
 from app.models.oj import get_oj_by_oj_id, get_oj_by_oj_name, get_oj_list
-from app.models.oj_username import get_oj_username
+from app.models.oj_username import get_oj_username, update_success_time
 from app.models.problem import get_problem_by_problem_info, get_problem_by_problem_id, modify_problem_rating
 # 导入spider
 from app.spiders.codeforces_spider import CodeforcesSpider
@@ -33,8 +33,8 @@ def crawl_accept_problem(username, oj_id):
 
     all_accept_problem = oj_spider().get_user_info(oj_username)
     print(all_accept_problem)
-    if not all_accept_problem:
-        return
+    if all_accept_problem:
+        update_success_time(username, oj_id)
 
     for problem_id in all_accept_problem:
         real_oj_id = oj_id
