@@ -20,10 +20,10 @@ class HysbzHttp(SpiderHttp):
 class HysbzSpider(BaseSpider):
     def get_user_info(self, oj_username):
         username = oj_username.oj_username
-        url = 'http://new.npuacm.info/api/crawlers/dashiye/{}'.format(username)
-        res = SpiderHttp().get(url=url)
-        res_json = json.loads(res.text)
-        return res_json.get('data', dict()).get('solvedList', list())
+        url = 'http://www.lydsy.com/JudgeOnline/userinfo.php?user={}'.format(username)
+        res = HysbzHttp().get(url=url)
+        accept_problem_list = re.findall(r'p\((\d+)\)', res.text)
+        return accept_problem_list
 
     def get_problem_info(self, problem_id):
         url = 'https://www.lydsy.com/JudgeOnline/problem.php?id={}'.format(problem_id)
@@ -44,4 +44,8 @@ class HysbzSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    print(HysbzSpider().get_problem_info('1000'))
+    from app.models.oj_username import OJUsername
+
+    oj_username = OJUsername()
+    oj_username.oj_username = 'Hile_M'
+    print(HysbzSpider().get_user_info(oj_username))
