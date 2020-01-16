@@ -1,8 +1,9 @@
 import json
 import time
 
-from tenacity import retry, wait_exponential, stop_after_attempt
 from app.config.setting import DEFAULT_PROBLEM_RATING
+from app.models.base import db
+from app.models.mapping import set_value
 from app.spiders.base_spider import BaseSpider
 from app.spiders.cookies import Cookies
 from app.spiders.jigsaw import Jigsaw
@@ -21,16 +22,31 @@ class PintiaHttp(SpiderHttp):
 
 
 class PintiaSpider(BaseSpider):
-    problem_set = {
+    problem_set = [
         ('91827364500', 'Z'),  # ZOJ
         ('994805046380707840', 'L'),  # 天梯赛
         ('994805148990160896', 'T'),  # 顶级
         ('994805342720868352', 'A'),  # 甲级
         ('994805260223102976', 'B'),  # 乙级
-    }
+    ]
     pintia_http = PintiaHttp()
 
     def get_user_info(self, oj_username):
+        t = 0
+        while 1:
+            with db.auto_commit():
+                query = db.session.execute("""
+                update mapping
+                set value = unix_timestamp(now())
+                where mapping.key = 'pta-key'
+                and unix_timestamp(now()) - cast(mapping.value as signed) > 600
+                """)
+            if query.rowcount != 0:
+                break
+            print(t)
+            t += 1
+            time.sleep(1)
+
         username = oj_username.oj_username
         password = oj_username.oj_password
         try:
@@ -46,26 +62,21 @@ class PintiaSpider(BaseSpider):
                                oj_username.oj_password, json.dumps(cookies))
             assert self.check_cookies(username)
 
-        # self.check_in()
-
         accept_problem_list = []
 
         for problem_set_id, tag in self.problem_set:
-            time.sleep(3)
             url = 'https://pintia.cn/api/problem-sets/{}/exam-problem-status'.format(problem_set_id)
             res = self.pintia_http.get(url=url).json()
             for problem in res.get('problemStatus', []):
                 if problem['problemSubmissionStatus'] == 'PROBLEM_ACCEPTED':
                     accept_problem_list.append(tag + '-' + problem['label'])
+        # 释放锁
+        set_value('pta-key', '0')
+
         return accept_problem_list
 
     def get_problem_info(self, problem_id):
         return {'rating': DEFAULT_PROBLEM_RATING}
-
-    def check_in(self):
-        url = 'https://pintia.cn/api/users/checkin'
-        res = self.pintia_http.post(url=url).json()
-        print(res)
 
     def check_cookies(self, email):
         url = 'https://pintia.cn/api/u/current'
@@ -93,7 +104,7 @@ class PintiaSpider(BaseSpider):
                 break
             except:
                 if t >= 10:
-                    raise Exception('验证失败')
+                    raise Exception('login fail')
         cookies = jigsaw.get_cookies()
         jigsaw.close()
         cookies = Cookies.list_to_dict(cookies)
@@ -105,9 +116,21 @@ class PintiaSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    from app import create_app
-    from app.models.oj_username import get_oj_username
+    def f(username):
+        from app import create_app
+        from app.models.oj_username import get_oj_username
 
-    create_app().app_context().push()
+        create_app().app_context().push()
+        print(username, len(PintiaSpider().get_user_info(get_oj_username(username, 25))))
 
-    print(PintiaSpider().get_user_info(get_oj_username('31801054', 25)))
+
+    from threading import Thread
+
+    t = Thread(target=f, args=['31801054'])
+    t.start()
+    t = Thread(target=f, args=['31702411'])
+    t.start()
+    t = Thread(target=f, args=['31801054'])
+    t.start()
+    t = Thread(target=f, args=['31702411'])
+    t.start()
