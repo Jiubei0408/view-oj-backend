@@ -76,7 +76,6 @@ class PintiaSpider(BaseSpider):
             return False
         return True
 
-    @retry(wait=wait_exponential(multiplier=1, max=10), stop=stop_after_attempt(5))
     def get_cookies(self, email, password):
         jigsaw = Jigsaw('https://pintia.cn/auth/login?redirect=https%3A%2F%2Fpintia.cn%2F', headless=False)
 

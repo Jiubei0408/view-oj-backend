@@ -1,3 +1,4 @@
+pyvirtualdisplay
 celery
 eventlet
 Flask

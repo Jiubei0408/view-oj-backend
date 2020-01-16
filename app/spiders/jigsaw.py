@@ -14,8 +14,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from app.spiders.cookies import Cookies
-
 
 class Jigsaw:
     def __init__(self, url: str,
@@ -52,6 +50,10 @@ class Jigsaw:
             options.add_argument("window-size=1200,1200")
         if platform.system() == "Linux":
             options.add_argument("no-sandbox")
+            from pyvirtualdisplay import Display
+
+            display = Display(visible=0, size=(1200, 120))
+            display.start()
         driver = webdriver.Chrome(options=options)
         driver.get(self.url)
         return driver
