@@ -15,10 +15,14 @@ class JisuankeSpider(BaseSpider):
         while True:
             url = 'https://i.jisuanke.com/timeline/nanti/{}?page={}'.format(username, page)
             res = SpiderHttp().get(url=url)
-            res_json = json.loads(res.text)
-            if not res_json['data']:
+            try:
+                res_json = json.loads(res.text)
+            except:
                 break
-            for data in res_json['data']:
+            res = res_json.get('data',dict())
+            if not res:
+                break
+            for data in res:
                 problem_id = re.findall('//nanti.jisuanke.com/t/(.*)', data['url'])[0]
                 problem_id = JisuankeSpider._change_problem_id(problem_id)
                 accept_list.append(problem_id)
