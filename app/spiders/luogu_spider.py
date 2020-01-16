@@ -25,20 +25,27 @@ class LuoguSpider(BaseSpider):
         url = 'https://www.luogu.com.cn/fe/api/user/search?keyword={}'.format(username)
         res = LuoguHttp().get(url=url)
         res_json = json.loads(res.text)
-        return res_json['users'][0]['uid']
+        res = None
+        try:
+            res = res_json['users'][0]['uid']
+        except:
+            pass
+        return res
 
     def get_user_info(self, oj_username):
         username = oj_username.oj_username
-        url = 'https://www.luogu.com.cn/user/{}'.format(self._get_user_id(username))
+        uid = self._get_user_id(username)
+        if uid is None:
+            return []
+        url = 'https://www.luogu.com.cn/user/{}'.format(uid)
         res = LuoguHttp().get(url=url)
         res_raw = re.search(r'decodeURIComponent\("(.*)"\)\);', res.text).group(1)
         res_str = unquote(res_raw)
-        res_json = execjs.eval(res_str)
+        res_json = json.loads(res_str)
 
         accept_problem_list = []
-        for problem in res_json['currentData']['passedProblems']:
+        for problem in res_json.get('currentData', dict()).get('passedProblems', dict()):
             accept_problem_list.append(problem['pid'])
-
         return accept_problem_list
 
     def get_problem_info(self, problem_id):
@@ -48,7 +55,7 @@ class LuoguSpider(BaseSpider):
         try:
             res_raw = re.search(r'decodeURIComponent\("(.*)"\)\);', res.text).group(1)
             res_str = unquote(res_raw)
-            res_json = execjs.eval(res_str)
+            res_json = json.loads(res_str)
 
             total = res_json['currentData']['problem']['totalSubmit']
             accept = res_json['currentData']['problem']['totalAccepted']
@@ -65,6 +72,6 @@ if __name__ == '__main__':
     from app.models.oj_username import OJUsername
 
     oj_username = OJUsername()
-    oj_username.oj_username = 'sumingzeng'
+    oj_username.oj_username = 'sumingz'
     print(LuoguSpider().get_user_info(oj_username))
     print(LuoguSpider().get_problem_info('1001'))
