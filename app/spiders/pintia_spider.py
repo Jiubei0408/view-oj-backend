@@ -2,8 +2,6 @@ import json
 import time
 
 from app.config.setting import DEFAULT_PROBLEM_RATING
-from app.models.base import db
-from app.models.mapping import set_value
 from app.spiders.base_spider import BaseSpider
 from app.spiders.cookies import Cookies
 from app.spiders.jigsaw import Jigsaw
@@ -20,6 +18,27 @@ class PintiaHttp(SpiderHttp):
         }
         self.headers.update(headers)
 
+    limit: int = 500
+    lastreq: int = 0
+
+    def time(self):
+        return int(time.time() * 1000)
+
+    def checklimit(self):
+        return self.time() - self.lastreq >= self.limit
+
+    def get(self, **kwargs):
+        while not self.checklimit():
+            time.sleep(self.limit / 1000)
+        self.lastreq = self.time()
+        return self._request('GET', **kwargs)
+
+    def post(self, **kwargs):
+        while not self.checklimit():
+            time.sleep(self.limit / 1000)
+        self.lastreq = self.time()
+        return self._request('POST', **kwargs)
+
 
 class PintiaSpider(BaseSpider):
     problem_set = [
@@ -32,21 +51,6 @@ class PintiaSpider(BaseSpider):
     pintia_http = PintiaHttp()
 
     def get_user_info(self, oj_username):
-        t = 0
-        while 1:
-            with db.auto_commit():
-                query = db.session.execute("""
-                update mapping
-                set value = unix_timestamp(now())
-                where mapping.key = 'pta-key'
-                and unix_timestamp(now()) - cast(mapping.value as signed) > 600
-                """)
-            if query.rowcount != 0:
-                break
-            print(t)
-            t += 1
-            time.sleep(1)
-
         username = oj_username.oj_username
         password = oj_username.oj_password
         try:
@@ -70,8 +74,6 @@ class PintiaSpider(BaseSpider):
             for problem in res.get('problemStatus', []):
                 if problem['problemSubmissionStatus'] == 'PROBLEM_ACCEPTED':
                     accept_problem_list.append(tag + '-' + problem['label'])
-        # 释放锁
-        set_value('pta-key', '0')
 
         return accept_problem_list
 
@@ -121,16 +123,11 @@ if __name__ == '__main__':
         from app.models.oj_username import get_oj_username
 
         create_app().app_context().push()
-        print(username, len(PintiaSpider().get_user_info(get_oj_username(username, 25))))
-
+        temp = PintiaSpider().get_user_info(get_oj_username(username, 25))
+        print(username, len(temp), temp)
 
     from threading import Thread
 
-    t = Thread(target=f, args=['31801054'])
-    t.start()
-    t = Thread(target=f, args=['31702411'])
-    t.start()
-    t = Thread(target=f, args=['31801054'])
-    t.start()
-    t = Thread(target=f, args=['31702411'])
-    t.start()
+    for i in range(0, 10):
+        t = Thread(target=f, args=['31801054'])
+        t.start()
